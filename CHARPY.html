@@ -196,12 +196,6 @@
                         <div class="mt-2 text-xs text-center bg-green-50 dark:bg-green-900/20 p-2 rounded border dark:border-green-800/20">
                             <span data-translate="initial_energy">Energia Potencial Inicial:</span>
                             <span id="initialEnergyDisplay" class="font-bold text-green-800 dark:text-green-300">290.1 J</span>
-                            <br>
-                            <span data-translate="initial_height">Alçada Inicial:</span>
-                            <span id="initialHeightDisplay" class="font-bold text-green-800 dark:text-green-300">0.0 m</span>
-                            <br>
-                            <span data-translate="final_height">Alçada Final:</span>
-                            <span id="finalHeightDisplay" class="font-bold text-green-800 dark:text-green-300">0.0 m</span>
                         </div>
                     </div>
                     
@@ -343,6 +337,8 @@
             lengthInput: document.getElementById('lengthInput'),
             lengthDisplay: document.getElementById('lengthDisplay'),
             initialEnergyDisplay: document.getElementById('initialEnergyDisplay'),
+            initialHeightDisplay: document.getElementById('initialHeightDisplay'),
+            finalHeightDisplay: document.getElementById('finalHeightDisplay'),
             btnReset: document.getElementById('btnReset'),
             energyDisp: document.getElementById('energyDisplay'),
             simCvs: document.getElementById('simCanvas'),
@@ -430,7 +426,6 @@
             const initial_h = state.pendulum.length * (1 - Math.cos(-2.618)); // Angle inicial fix
             const initialEnergy = state.pendulum.mass * 9.81 * initial_h;
             els.initialEnergyDisplay.textContent = `${initialEnergy.toFixed(1)} J`;
-            els.initialHeightDisplay.textContent = `${initial_h.toFixed(3)} m`;
         }
 
         // --- Lógica de Energía y Cálculo ---
@@ -459,13 +454,12 @@
             state.energyAbsorbed = calculateEnergy(els.mat.value, state.currentTemp);
             
             // Calcular ángulo final objetivo
-            const h_initial_swing = state.pendulum.length * (1 - Math.cos(state.angle)); // L'angle inicial actual del swing
-            const maxSystemEnergy = state.pendulum.mass * 9.81 * h_initial_swing;
+            const h_initial = state.pendulum.length * (1 - Math.cos(state.angle));
+            const maxSystemEnergy = state.pendulum.mass * 9.81 * h_initial;
 
             // Si la energía absorbida es mayor que la inicial, el péndulo se detiene
             const finalEnergy = Math.max(0, maxSystemEnergy - state.energyAbsorbed);
             const h_final = finalEnergy / (state.pendulum.mass * 9.81);
-            els.finalHeightDisplay.textContent = `${h_final.toFixed(3)} m`;
             
             // Càlcul de l'angle final a partir de l'alçada final
             const cos_target_angle = Math.min(1, 1 - (h_final / state.pendulum.length)); // Assegurem que no sigui > 1
@@ -484,21 +478,17 @@
         function animatePendulum() {
             if (!state.swinging) return;
 
-            const G_PHYSICS = 9.81; // Real gravity
-            const DT_ANIMATION = 0.05; // Time step for animation speed (adjust as needed)
-
             if (state.phase === 'down') {
-                const angular_acceleration = -(G_PHYSICS / state.pendulum.length) * Math.sin(state.angle);
-                state.velocity += angular_acceleration * DT_ANIMATION;
-                state.angle += state.velocity * DT_ANIMATION;
+                // Model físic simplificat per a l'animació
+                const angular_acceleration = -0.05 * Math.sin(state.angle);
+                state.velocity += angular_acceleration;
+                state.angle += state.velocity;
+                state.velocity *= 0.99; // Fricció lleu
 
-                // console.log(`Angle: ${state.angle.toFixed(3)}, Velocity: ${state.velocity.toFixed(3)}, Accel: ${angular_acceleration.toFixed(3)}`);
-
-                if (state.angle >= 0) { // L'impacte és just a l'angle 0
+                if (state.angle >= 0) {
                     // IMPACTO
                     state.phase = 'impact';
                     state.angle = 0;
-                    state.velocity = Math.abs(state.velocity); // Velocity is positive after impact
                 }
             } else if (state.phase === 'impact') {
                 state.phase = 'up';
