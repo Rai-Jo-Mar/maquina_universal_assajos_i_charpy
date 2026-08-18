@@ -2,16 +2,17 @@
 
 ## Objectiu Principal
 
-Crear un conjunt d'eines educatives interactives per al mòdul "Assajos Físics" de Formació Professional. L'objectiu és simular el comportament de màquines d'assaig universals per a diferents tipus de sol·licitacions mecàniques.
+Crear un conjunt d'eines educatives interactives per al mòdul "Assajos Físics" del cicle de **Programació de la Producció en Fabricació Mecànica**. L'objectiu és simular el comportament de màquines d'assaig per a diferents tipus de sol·licitacions mecàniques, permetent a l'alumnat experimentar amb variables que en un laboratori real serien costoses o complexes de modificar.
 
 ## Arquitectura i Tecnologia
 
 - **Frontend**: HTML, CSS i JavaScript (ES6).
 - **Frameworks CSS**: [TailwindCSS](https://tailwindcss.com/) utilitzat a través de CDN per a un disseny ràpid i responsiu.
 - **Llibreries JavaScript**:
-    - [Chart.js](https://www.chartjs.org/) (implícit en alguns fitxers via `<canvas>`) per a la generació de gràfiques dinàmiques.
+    - **Gràfiques**: Implementades directament amb l'API de `<canvas>` de HTML5 per a un control total i sense dependències externes.
     - MathJax per renderitzar correctament les fórmules matemàtiques en format LaTeX.
-- **Estructura**: Cada assaig (`TRACCIO`, `COMPRESIO`, etc.) és un fitxer HTML independent i autocontingut. No hi ha un procés de *build* ni dependències externes que calgui instal·lar. El codi JavaScript i l'estil CSS estan incrustats dins del mateix fitxer HTML.
+- **Codi Comú**: Un fitxer `common.js` centralitza la lògica compartida, com la gestió del tema fosc/clar, el sistema de traduccions i funcions d'utilitat (exportació a CSV).
+- **Estructura**: Cada assaig (`TRACCIO`, `COMPRESIO`, etc.) és un fitxer HTML independent que inclou la seva pròpia lògica de simulació en un bloc `<script>`. No hi ha un procés de *build* ni dependències complexes.
 
 ## Estructura d'un Fitxer d'Assaig (`.html`)
 

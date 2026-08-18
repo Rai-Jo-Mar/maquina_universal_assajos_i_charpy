@@ -138,6 +138,11 @@
                             <option data-translate="aluminum" value="aluminum">Aliatge d'Alumini (6061)</option>
                             <option data-translate="copper" value="copper">Coure Recuït</option>
                             <option data-translate="polymer" value="polymer">Polímer Rígid (PVC)</option>
+                            <optgroup data-translate="composites" label="Materials Compòsits">
+                                <option data-translate="cfrp" value="cfrp">Fibra de Carboni (CFRP)</option>
+                                <option data-translate="gfrp" value="gfrp">Fibra de Vidre (GFRP)</option>
+                                <option data-translate="aramid" value="aramid">Fibra d'Aramida (Kevlar)</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div>
@@ -272,7 +277,10 @@
             steel: { name: 'Acero S275', E: 210000, yieldStress: 275, ultimateStress: 430, fractureStrain: 0.22, n: 0.15, color: '#718096', 'data-translate': 'steel' },
             aluminum: { name: 'Aluminio 6061', E: 69000, yieldStress: 276, ultimateStress: 310, fractureStrain: 0.17, n: 0.05, color: '#CBD5E0', 'data-translate': 'aluminum' },
             copper: { name: 'Cobre', E: 117000, yieldStress: 70, ultimateStress: 220, fractureStrain: 0.45, n: 0.4, color: '#B7791F', 'data-translate': 'copper' },
-            polymer: { name: 'PVC', E: 3000, yieldStress: 45, ultimateStress: 55, fractureStrain: 0.80, n: 0.5, color: '#EDF2F7', 'data-translate': 'polymer' }
+            polymer: { name: 'PVC', E: 3000, yieldStress: 45, ultimateStress: 55, fractureStrain: 0.80, n: 0.5, color: '#EDF2F7', 'data-translate': 'polymer' },
+            cfrp: { name: 'Fibra de Carbono', E: 150000, yieldStress: 1800, ultimateStress: 2000, fractureStrain: 0.015, n: 1, color: '#2d3748', 'data-translate': 'cfrp' }, // Comportamiento casi lineal
+            gfrp: { name: 'Fibra de Vidrio', E: 50000, yieldStress: 900, ultimateStress: 1000, fractureStrain: 0.025, n: 1, color: '#a0aec0', 'data-translate': 'gfrp' },
+            aramid: { name: 'Aramida (Kevlar)', E: 80000, yieldStress: 1200, ultimateStress: 1400, fractureStrain: 0.02, n: 0.9, color: '#f6e05e', 'data-translate': 'aramid' }
         };
 
         let state = {

@@ -168,6 +168,10 @@
                                 <option data-translate="pmma" value="pmma">Metacrilat (PMMA)</option>
                                 <option data-translate="pp" value="pp">Polipropilè (Molt flexible)</option>
                             </optgroup>
+                            <optgroup data-translate="composites" label="Materials Compòsits">
+                                <option data-translate="cfrp" value="cfrp">Fibra de Carboni (CFRP)</option>
+                                <option data-translate="gfrp" value="gfrp">Fibra de Vidre (GFRP)</option>
+                            </optgroup>
                         </select>
                     </div>
 
@@ -341,7 +345,9 @@
             glass:    { name: 'Vidrio',       E: 70000,  MOR: 40,  type: 'brittle', color: '#a5f3fc', maxDef: 2, opacity: 0.6 },
             ceramic:  { name: 'Cerámica',     E: 60000,  MOR: 35,  type: 'brittle', color: '#fca5a5', maxDef: 1.5 },
             pmma:     { name: 'Metacrilato',  E: 3000,   MOR: 100, type: 'ductile', color: '#e2e8f0', maxDef: 25, opacity: 0.5 },
-            pp:       { name: 'Polipropileno',E: 1500,   MOR: 40,  type: 'super-ductile', color: '#f1f5f9', maxDef: 40 }
+            pp:       { name: 'Polipropileno',E: 1500,   MOR: 40,  type: 'super-ductile', color: '#f1f5f9', maxDef: 40 },
+            cfrp:     { name: 'CFRP',         E: 140000, MOR: 1500,type: 'brittle', color: '#2d3748', maxDef: 3 },
+            gfrp:     { name: 'GFRP',         E: 45000,  MOR: 800, type: 'brittle', color: '#a0aec0', maxDef: 5 }
         };
 
         let state = {
