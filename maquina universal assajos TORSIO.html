@@ -59,15 +59,8 @@
             background-image:  linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
             background-size: 20px 20px;
         }
-        .dark .machine-bg {
-            background-color: #1f2937; /* Darker background for dark mode */
-            background-image: linear-gradient(#374151 1px, transparent 1px), linear-gradient(90deg, #374151 1px, transparent 1px); /* Darker grid lines */
-        }
         canvas {
             background-color: #ffffff;
-        }
-        .dark canvas {
-            background-color: #1f2937; /* Darker canvas background */
         }
         .panel-header {
             background: linear-gradient(90deg, #4c1d95 0%, #6d28d9 100%); /* Violeta */
@@ -77,20 +70,44 @@
             color: #5b21b6;
             font-weight: bold;
         }
+        /* Icones per al botó de tema */
+        .dark .sun-icon { display: block; }
+        .dark .moon-icon { display: none; }
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans">
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
 
     <!-- Header -->
-    <header class="bg-violet-900 text-white p-4 shadow-md border-b-4 border-violet-500">
+    <header class="bg-violet-900 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-violet-500 dark:border-violet-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold">Laboratori Virtual: Torsió</h1>
-                <p class="text-sm opacity-80">Assaig de Torsió Simple (Materials Metàlics)</p>
+                <h1 data-translate="torsion_title" class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Torsió</h1>
+                <p data-translate="torsion_subtitle" class="text-sm opacity-80 dark:text-slate-300">Assaig de Torsió Simple (Materials Metàlics)</p>
             </div>
-            <div class="text-right text-sm hidden md:block">
-                <p>Mòdul: Assajos Físics</p>
-                <p>Simulació: Torsiòmetre Digital</p>
+            <div class="flex items-center gap-2">
+                <a data-translate="return_to_menu" href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+                <!-- Botó de Tema -->
+                <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-violet-800 dark:hover:bg-slate-700 focus:outline-none">
+                    <!-- Icona Sol (per a tema fosc) -->
+                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <!-- Icona Lluna (per a tema clar) -->
+                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                </button>
+                <!-- Menú Idioma -->
+                <div class="relative">
+                    <button id="lang-toggle" class="p-2 rounded-full text-slate-300 hover:bg-violet-800 dark:hover:bg-slate-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m4 13-4-4-4 4M19 17v-2a4 4 0 00-4-4H9M19 17h-4" /></svg>
+                    </button>
+                    <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-md shadow-lg py-1 z-20 border dark:border-slate-700">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('ca'); return false;">Català / Valencià</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('es'); return false;">Español</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('eu'); return false;">Euskara</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('gl'); return false;">Galego</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('en'); return false;">English</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -103,55 +120,55 @@
             <!-- Configuración -->
             <div class="bg-white rounded-lg shadow border border-slate-200 overflow-hidden">
                 <div class="panel-header p-3 font-bold flex justify-between items-center">
-                    <span>1. Configuració de l'Assaig</span>
+                    <span data-translate="torsion_config">1. Configuració de l'Assaig</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                     </svg>
                 </div>
                 <div class="p-4 space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-600 mb-1">Material</label>
+                        <label data-translate="material" class="block text-sm font-medium text-slate-600 mb-1">Material</label>
                         <select id="materialSelect" class="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-violet-500 outline-none">
-                            <optgroup label="Dúctiles">
-                                <option value="steel">Acer F-114 (Estructural)</option>
-                                <option value="brass">Llautó (Aliatge Cu-Zn)</option>
+                            <optgroup data-translate="ductile" label="Dúctils">
+                                <option data-translate="f114_steel" value="steel">Acer F-114 (Estructural)</option>
+                                <option data-translate="brass" value="brass">Llautó (Aliatge Cu-Zn)</option>
                                 <option value="aluminum">Alumini 6063</option>
                             </optgroup>
-                            <optgroup label="Frágiles">
-                                <option value="cast_iron">Fundició Gris (Ferro Colat)</option>
+                            <optgroup data-translate="fragile" label="Fràgils">
+                                <option data-translate="cast_iron" value="cast_iron">Fundició Gris (Ferro Colat)</option>
                             </optgroup>
-                            <optgroup label="Polímeros">
-                                <option value="nylon">Nylon (Poliamida)</option>
+                            <optgroup data-translate="polymers" label="Polímers">
+                                <option data-translate="nylon" value="nylon">Nylon (Poliamida)</option>
                             </optgroup>
                         </select>
                     </div>
 
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-xs font-medium text-slate-500">Longitut ($L_0$) [mm]</label>
+                            <label data-translate="length" class="block text-xs font-medium text-slate-500">Longitud ($L_0$) [mm]</label>
                             <input type="number" id="lengthInput" value="100" class="w-full p-2 border rounded text-sm" min="50" max="200">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-500">Diàmetre ($D_0$) [mm]</label>
+                            <label data-translate="diameter" class="block text-xs font-medium text-slate-500">Diàmetre ($D_0$) [mm]</label>
                             <input type="number" id="diameterInput" value="10" class="w-full p-2 border rounded text-sm" min="5" max="20">
                         </div>
                     </div>
                     
                     <div class="bg-violet-50 p-2 rounded border border-violet-100 text-xs text-violet-900">
                         <div class="flex justify-between mb-1">
-                            <span>Moment Polar Inercia ($J$):</span>
+                            <span data-translate="polar_moment">Moment Polar Inèrcia ($J$):</span>
                             <span id="inertiaDisplay" class="font-mono font-bold">981.7 mm⁴</span>
                         </div>
-                        <div class="text-[10px] text-violet-700 opacity-80 italic">
+                        <div data-translate="polar_moment_formula" class="text-[10px] text-violet-700 opacity-80 italic">
                             Fòrmula: $J = \frac{\pi \cdot D^4}{32}$ (Secció massissa)
                         </div>
                     </div>
 
                     <div class="flex gap-2 pt-2">
-                        <button id="btnStart" class="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded font-bold transition shadow-md" onclick="startTest()">
+                        <button data-translate="start_rotation" id="btnStart" class="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded font-bold transition shadow-md" onclick="startTest()">
                             ▶ Iniciar Gir
                         </button>
-                        <button id="btnReset" class="w-1/3 bg-slate-500 hover:bg-slate-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>
+                        <button data-translate="reset" id="btnReset" class="w-1/3 bg-slate-500 hover:bg-slate-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>
                             ↻ Reset
                         </button>
                     </div>
@@ -160,7 +177,7 @@
 
             <!-- Visor Visual (Canvas Máquina) -->
             <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col relative min-h-[280px]">
-                <div class="absolute top-2 left-2 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase z-10">Banc de Torsió</div>
+                <div data-translate="torsion_bench" class="absolute top-2 left-2 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase z-10">Banc de Torsió</div>
                 
                 <!-- Machine Canvas -->
                 <div class="w-full h-full machine-bg flex items-center justify-center p-2 relative">
@@ -168,11 +185,11 @@
                     
                     <!-- Digital Displays Overlay -->
                     <div class="absolute bottom-4 left-4 bg-black/90 dark:bg-slate-900/90 text-green-400 font-mono p-2 rounded text-sm border border-gray-600 dark:border-slate-700 shadow-lg">
-                        <div class="text-xs text-gray-400 dark:text-gray-500">PARELL (Torque)</div>
+                        <div data-translate="torque" class="text-xs text-gray-400 dark:text-gray-500">PARELL (Torque)</div>
                         <div id="torqueDisplay" class="text-xl font-bold">0.00 Nm</div>
                     </div>
                     <div class="absolute bottom-4 right-4 bg-black/90 text-cyan-400 font-mono p-2 rounded text-sm border border-gray-600 shadow-lg text-right">
-                        <div class="text-xs text-gray-400">ANGLE ($\phi$)</div>
+                        <div data-translate="angle_phi" class="text-xs text-gray-400">ANGLE (φ)</div>
                         <div id="angleDisplay" class="text-xl font-bold">0.0°</div>
                     </div>
                 </div>
@@ -185,10 +202,10 @@
             <!-- Gráfica -->
             <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700 p-4 h-96 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-bold text-violet-800 dark:text-violet-300">2. Diagrama Moment - Angle</h2>
+                    <h2 data-translate="graph_title_torsion" class="text-lg font-bold text-violet-800 dark:text-violet-300">2. Diagrama Moment - Angle</h2>
                     <div class="flex gap-2 text-xs dark:text-slate-300">
-                        <span class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded border dark:border-slate-600">Y: Parell Torsor (Nm)</span>
-                        <span class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded border dark:border-slate-600">X: Gir (rad)</span>
+                        <span data-translate="y_axis_torque" class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded border dark:border-slate-600">Y: Parell Torsor (Nm)</span>
+                        <span data-translate="x_axis_angle" class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded border dark:border-slate-600">X: Gir (rad)</span>
                     </div>
                 </div>
                 <div class="relative flex-grow w-full h-full">
@@ -200,25 +217,25 @@
             <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700 flex-grow p-4">
                 <div class="flex justify-between items-end mb-3">
                     <div>
-                        <h2 class="text-lg font-bold text-violet-800 dark:text-violet-300">3. Registre de Dades</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Tensió tallant máx: $\tau = \frac{16 T}{\pi D^3}$</p>
+                        <h2 data-translate="data_acq_torsion" class="text-lg font-bold text-violet-800 dark:text-violet-300">3. Registre de Dades</h2>
+                        <p data-translate="shear_stress_formula" class="text-xs text-slate-500 dark:text-slate-400">Tensió tallant màx: $\tau = \frac{16 T}{\pi D^3}$</p>
                     </div>
                     <button id="btnExport" disabled class="bg-violet-600 hover:bg-violet-700 disabled:bg-gray-300 text-white px-3 py-2 rounded text-sm flex items-center gap-2 transition">
-                        Descarregar CSV
+                        <span data-translate="download_csv">Descarregar CSV</span>
                     </button>
                 </div>
                 <div class="overflow-y-auto h-48 border rounded">
                     <table class="w-full text-sm text-left text-gray-600 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-100 dark:bg-slate-700 sticky top-0">
                             <tr>
-                                <th class="px-4 py-2">Ángue (°)</th>
-                                <th class="px-4 py-2">Ángle (rad)</th>
-                                <th class="px-4 py-2">Parell (Nm)</th>
-                                <th class="px-4 py-2">$\tau$ (MPa)</th>
+                                <th data-translate="angle_deg" class="px-4 py-2">Angle (°)</th>
+                                <th data-translate="angle_rad" class="px-4 py-2">Angle (rad)</th>
+                                <th data-translate="torque_nm" class="px-4 py-2">Parell (Nm)</th>
+                                <th data-translate="shear_stress_mpa" class="px-4 py-2">τ (MPa)</th>
                             </tr>
                         </thead>
                         <tbody id="dataTableBody" class="dark:bg-slate-800">
-                            <tr><td colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">Sistema en repos. Configura probeta.</td></tr>
+                            <tr><td data-translate="system_idle" colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">Sistema en repòs. Configura probeta.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -287,11 +304,6 @@
                     drawGrid();
                     drawMachineStatic();
                 }
-            });
-
-            window.addEventListener('themeChanged', () => {
-                drawGrid(); // Redibuja la rejilla con los colores del tema
-                if (state.data.length > 0) drawChart(); // Redibuja la gráfica si hay datos
             });
 
             window.addEventListener('themeChanged', () => {
@@ -448,7 +460,7 @@
             
             els.torqueDisp.textContent = "0.00 Nm";
             els.angleDisp.textContent = "0.0°";
-            els.table.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-400">Listo.</td></tr>';
+            els.table.innerHTML = `<tr><td data-translate="ready" colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">${translations[localStorage.getItem('language') || 'ca']['ready']}</td></tr>`;
 
             cCtx.clearRect(0, 0, els.chartCvs.width, els.chartCvs.height);
             drawGrid();
@@ -643,9 +655,6 @@
             const isDark = document.documentElement.classList.contains('dark');
             const textColor = isDark ? '#d1d5db' : '#000';
 
-            const isDark = document.documentElement.classList.contains('dark');
-            const textColor = isDark ? '#d1d5db' : '#000';
-
             drawGrid();
 
             const getX = (val) => p + (val / maxAng) * (w - p);
@@ -670,16 +679,24 @@
         init();
     </script>
     <script>
-        // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
+        // Funcionalitat dels menús i traduccions
         document.addEventListener('DOMContentLoaded', () => {
+            // Botó de tema
             setupThemeToggler(document.getElementById('theme-toggle'));
+
+            // Menú d'idioma
+            const langToggle = document.getElementById('lang-toggle');
+            const langMenu = document.getElementById('lang-menu');
+            langToggle.addEventListener('click', () => langMenu.classList.toggle('hidden'));
+            window.addEventListener('click', (e) => {
+                if (!langToggle.contains(e.target) && !langMenu.contains(e.target)) {
+                    langMenu.classList.add('hidden');
+                }
+            });
+
+            // Aplicar traduccions a l'inici
+            applyTranslations();
         });
     </script>
 </body>
-</html>
-
-<body>
-	
-</body>
-
 </html>

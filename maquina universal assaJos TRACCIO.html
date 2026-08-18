@@ -85,22 +85,29 @@
     <header class="bg-blue-900 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-blue-700 dark:border-blue-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Tracció</h1>
-                <p class="text-sm opacity-80 dark:text-slate-300">Assaig de Tracció Uniaxial</p>
+                <h1 data-translate="traction_title" class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Tracció</h1>
+                <p data-translate="traction_subtitle" class="text-sm opacity-80 dark:text-slate-300">Assaig de Tracció Uniaxial</p>
             </div>
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+            <div class="flex items-center gap-2">
+                <a data-translate="return_to_menu" href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
                 <!-- Botó de Tema -->
                 <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-blue-800 dark:hover:bg-slate-700 focus:outline-none">
-                    <!-- Icona Sol (per a tema fosc) -->
-                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <!-- Icona Lluna (per a tema clar) -->
-                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
+                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                 </button>
+                <!-- Menú Idioma -->
+                <div class="relative">
+                    <button id="lang-toggle" class="p-2 rounded-full text-slate-300 hover:bg-blue-800 dark:hover:bg-slate-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m4 13-4-4-4 4M19 17v-2a4 4 0 00-4-4H9M19 17h-4" /></svg>
+                    </button>
+                    <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-md shadow-lg py-1 z-20 border dark:border-slate-700">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('ca'); return false;">Català / Valencià</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('es'); return false;">Español</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('eu'); return false;">Euskara</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('gl'); return false;">Galego</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('en'); return false;">English</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -112,42 +119,42 @@
             
             <!-- Configuración -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700">
-                <h2 class="text-lg font-bold mb-3 text-blue-800 dark:text-blue-300 border-b border-slate-200 dark:border-slate-700 pb-2">1. Configuració de la Probeta</h2>
+                <h2 data-translate="specimen_config" class="text-lg font-bold mb-3 text-blue-800 dark:text-blue-300 border-b border-slate-200 dark:border-slate-700 pb-2">1. Configuració de la Probeta</h2>
                 
                 <div class="grid grid-cols-1 gap-3 mb-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
+                        <label data-translate="material" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
                         <select id="materialSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white">
-                            <option value="steel">Acer Estructural (S275)</option>
-                            <option value="aluminum">Aleació Alumini (6061)</option>
-                            <option value="copper">Coure Recocuit</option>
-                            <option value="polymer">Polímer Rígid (PVC)</option>
+                            <option data-translate="steel" value="steel">Acer Estructural (S275)</option>
+                            <option data-translate="aluminum" value="aluminum">Aliatge d'Alumini (6061)</option>
+                            <option data-translate="copper" value="copper">Coure Recuït</option>
+                            <option data-translate="polymer" value="polymer">Polímer Rígid (PVC)</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Longitut ($L_0$) [mm]</label>
+                            <label data-translate="length" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Longitud ($L_0$) [mm]</label>
                             <input type="number" id="lengthInput" value="100" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white" min="50" max="200">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Diàmetre ($D_0$) [mm]</label>
+                            <label data-translate="diameter" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Diàmetre ($D_0$) [mm]</label>
                             <input type="number" id="diameterInput" value="10" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white" min="5" max="20">
                         </div>
                     </div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        * Àrea ($S_0$): <span id="areaDisplay" class="font-bold">78.54</span> mm²
+                        * <span data-translate="area">Àrea</span> ($S_0$): <span id="areaDisplay" class="font-bold">78.54</span> mm²
                     </div>
                 </div>
 
                 <div class="flex gap-2">
-                    <button id="btnStart" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded font-bold transition" onclick="startTest()">Iniciar Assaig</button>
-                    <button id="btnReset" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>Reset</button>
+                    <button data-translate="start_test" id="btnStart" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 rounded font-bold transition" onclick="startTest()">Iniciar Assaig</button>
+                    <button data-translate="reset" id="btnReset" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>Reset</button>
                 </div>
             </div>
 
             <!-- Visualización de la Máquina -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 flex-grow flex flex-col items-center justify-center min-h-[300px] relative">
-                <h3 class="absolute top-4 left-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">Cambra d'assajos</h3>
+                <h3 data-translate="test_chamber" class="absolute top-4 left-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">Cambra d'assajos</h3>
                 
                 <!-- Mordaza Superior (Fija) -->
                 <div class="w-32 h-12 machine-frame rounded-b-md shadow-lg z-10 flex items-center justify-center">
@@ -168,7 +175,7 @@
 
                 <div class="mt-8 text-center">
                     <div class="text-3xl font-mono font-bold text-red-600 dark:text-red-500" id="forceDisplay">0.00 kN</div>
-                    <div class="text-sm text-gray-500 dark:text-gray-400">Carrega Actual</div>
+                    <div data-translate="current_load" class="text-sm text-gray-500 dark:text-gray-400">Càrrega Actual</div>
                 </div>
             </div>
         </div>
@@ -179,8 +186,8 @@
             <!-- Gráfica -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 h-96 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-bold text-blue-800 dark:text-blue-300">2. Diagrama Força - Allargament</h2>
-                    <span class="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded border border-yellow-200 dark:border-yellow-700">Simulación en tiempo real</span>
+                    <h2 data-translate="graph_title_traction" class="text-lg font-bold text-blue-800 dark:text-blue-300">2. Diagrama Força - Allargament</h2>
+                    <span data-translate="real_time_sim" class="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded border border-yellow-200 dark:border-yellow-700">Simulació en temps real</span>
                 </div>
                 <div class="relative flex-grow w-full h-full">
                     <canvas id="testCanvas" class="w-full h-full rounded border border-slate-200 dark:border-slate-700"></canvas>
@@ -191,14 +198,14 @@
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 flex-grow">
                 <div class="flex justify-between items-end mb-4">
                     <div>
-                        <h2 class="text-lg font-bold text-blue-800 dark:text-blue-300">3. Adquisició de Dades</h2>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">Dades crus obtinguts del sensor de carrega i extensòmetre.</p>
+                        <h2 data-translate="data_acquisition" class="text-lg font-bold text-blue-800 dark:text-blue-300">3. Adquisició de Dades</h2>
+                        <p data-translate="data_subtitle_traction" class="text-sm text-slate-500 dark:text-slate-400">Dades crues obtingudes del sensor de càrrega i l'extensòmetre.</p>
                     </div>
                     <button id="btnExport" disabled class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded flex items-center gap-2 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
-                        Descarregar CSV
+                        <span data-translate="download_csv">Descarregar CSV</span>
                     </button>
                 </div>
 
@@ -206,16 +213,16 @@
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-slate-700">
                             <tr>
-                                <th class="px-4 py-2">Temps (s)</th>
-                                <th class="px-4 py-2">Força (N)</th>
-                                <th class="px-4 py-2">Allargament (mm)</th>
-                                <th class="px-4 py-2">Tensió (MPa)</th>
-                                <th class="px-4 py-2">Deformació (%)</th>
+                                <th data-translate="time_s" class="px-4 py-2">Temps (s)</th>
+                                <th data-translate="force_n" class="px-4 py-2">Força (N)</th>
+                                <th data-translate="elongation_mm" class="px-4 py-2">Allargament (mm)</th>
+                                <th data-translate="stress_mpa" class="px-4 py-2">Tensió (MPa)</th>
+                                <th data-translate="strain_perc" class="px-4 py-2">Deformació (%)</th>
                             </tr>
                         </thead>
                         <tbody id="dataTableBody" class="dark:bg-slate-800">
                             <!-- Las filas se añadirán dinámicamente -->
-                            <tr class="dark:bg-slate-800"><td colspan="5" class="text-center py-4">Esperant inici de l'assig...</td></tr>
+                            <tr class="dark:bg-slate-800"><td data-translate="waiting_for_test" colspan="5" class="text-center py-4">Esperant inici de l'assaig...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -227,10 +234,10 @@
         // --- Configuración y Física de Materiales ---
         // Propiedades aproximadas para fines educativos (con aleatoriedad implementada luego)
         const materials = { // n: exponente de endurecimiento por deformación
-            steel: { name: 'Acero S275', E: 210000, yieldStress: 275, ultimateStress: 430, fractureStrain: 0.22, n: 0.15, color: '#718096' },
-            aluminum: { name: 'Aluminio 6061', E: 69000, yieldStress: 276, ultimateStress: 310, fractureStrain: 0.17, n: 0.05, color: '#CBD5E0' },
-            copper: { name: 'Cobre', E: 117000, yieldStress: 70, ultimateStress: 220, fractureStrain: 0.45, n: 0.4, color: '#B7791F' },
-            polymer: { name: 'PVC', E: 3000, yieldStress: 45, ultimateStress: 55, fractureStrain: 0.80, n: 0.5, color: '#EDF2F7' }
+            steel: { name: 'Acero S275', E: 210000, yieldStress: 275, ultimateStress: 430, fractureStrain: 0.22, n: 0.15, color: '#718096', 'data-translate': 'steel' },
+            aluminum: { name: 'Aluminio 6061', E: 69000, yieldStress: 276, ultimateStress: 310, fractureStrain: 0.17, n: 0.05, color: '#CBD5E0', 'data-translate': 'aluminum' },
+            copper: { name: 'Cobre', E: 117000, yieldStress: 70, ultimateStress: 220, fractureStrain: 0.45, n: 0.4, color: '#B7791F', 'data-translate': 'copper' },
+            polymer: { name: 'PVC', E: 3000, yieldStress: 45, ultimateStress: 55, fractureStrain: 0.80, n: 0.5, color: '#EDF2F7', 'data-translate': 'polymer' }
         };
 
         let state = {
@@ -502,7 +509,7 @@
             updateVisuals(); // Restaurar ancho
             
             els.forceDisplay.textContent = "0.00 kN";
-            els.tableBody.innerHTML = '<tr class="dark:bg-slate-800"><td colspan="5" class="text-center py-4">Listo para nuevo ensayo</td></tr>';
+            els.tableBody.innerHTML = `<tr class="dark:bg-slate-800"><td data-translate="ready_for_new_test" colspan="5" class="text-center py-4">Llest per a un nou assaig</td></tr>`;
             
             ctx.clearRect(0, 0, els.canvas.width, els.canvas.height);
             drawGrid();
@@ -595,9 +602,23 @@
 
     </script>
     <script>
-        // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
+        // Funcionalitat dels menús i traduccions
         document.addEventListener('DOMContentLoaded', () => {
+            // Botó de tema
             setupThemeToggler(document.getElementById('theme-toggle'));
+
+            // Menú d'idioma
+            const langToggle = document.getElementById('lang-toggle');
+            const langMenu = document.getElementById('lang-menu');
+            langToggle.addEventListener('click', () => langMenu.classList.toggle('hidden'));
+            window.addEventListener('click', (e) => {
+                if (!langToggle.contains(e.target) && !langMenu.contains(e.target)) {
+                    langMenu.classList.add('hidden');
+                }
+            });
+
+            // Aplicar traduccions a l'inici
+            applyTranslations();
         });
     </script>
 </body>

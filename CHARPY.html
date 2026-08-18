@@ -87,6 +87,11 @@
         }
         input[type=range].cold::-webkit-slider-thumb { background: #2563eb; }
         input[type=range].hot::-webkit-slider-thumb { background: #dc2626; }
+        /* Icones per al botó de tema */
+        .dark .sun-icon { display: block; }
+        .dark .moon-icon { display: none; }
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
     </style>
 </head>
 <body class="bg-green-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
@@ -659,11 +664,12 @@
         }
 
         init();
-
+    </script>
+    <script>
+        // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
+        document.addEventListener('DOMContentLoaded', () => {
+            setupThemeToggler(document.getElementById('theme-toggle'));
+        });
     </script>
 </body>
-</html>
-	
-</body>
-
 </html>

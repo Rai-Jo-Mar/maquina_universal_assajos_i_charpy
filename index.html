@@ -31,28 +31,39 @@
 
     <!-- Header Principal -->
     <header class="bg-slate-800 dark:bg-gray-900 text-white p-6 shadow-lg border-b-4 border-slate-500 dark:border-slate-700">
-        <div class="container mx-auto text-center relative">
-            <h1 class="text-4xl font-bold dark:text-slate-100">Laboratori Virtual d'Assajos de Materials</h1>
-            <p class="text-lg opacity-80 mt-2 dark:text-slate-300">Simulacions interactives per a Formació Professional</p>
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-left">
+                <h1 data-translate="main_title" class="text-3xl lg:text-4xl font-bold dark:text-slate-100">Laboratori Virtual d'Assajos de Materials</h1>
+                <p data-translate="main_subtitle" class="text-md lg:text-lg opacity-80 mt-2 dark:text-slate-300">Simulacions interactives per a Formació Professional</p>
+            </div>
             
-            <!-- Botó de Tema -->
-            <button id="theme-toggle" class="absolute top-0 right-0 p-2 rounded-full text-slate-400 hover:bg-slate-700 focus:outline-none">
-                <!-- Icona Sol (per a tema fosc) -->
-                <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                </svg>
-                <!-- Icona Lluna (per a tema clar) -->
-                <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                </svg>
-            </button>
+            <div class="flex items-center gap-2">
+                <!-- Botó de Tema -->
+                <button id="theme-toggle" class="p-2 rounded-full text-slate-400 hover:bg-slate-700 focus:outline-none">
+                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                </button>
+                <!-- Menú Idioma -->
+                <div class="relative">
+                    <button id="lang-toggle" class="p-2 rounded-full text-slate-400 hover:bg-slate-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m4 13-4-4-4 4M19 17v-2a4 4 0 00-4-4H9M19 17h-4" /></svg>
+                    </button>
+                    <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-md shadow-lg py-1 z-20 border dark:border-slate-700">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('ca'); return false;">Català / Valencià</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('es'); return false;">Español</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('eu'); return false;">Euskara</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('gl'); return false;">Galego</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('en'); return false;">English</a>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
     <!-- Contingut Principal: Llistat d'Assajos -->
     <main class="container mx-auto p-6 md:p-8">
         
-        <h2 class="text-2xl font-bold text-slate-700 dark:text-slate-200 mb-6 text-center">Selecciona un Assaig per Començar</h2>
+        <h2 data-translate="select_test" class="text-2xl font-bold text-slate-700 dark:text-slate-200 mb-6 text-center">Selecciona un Assaig per Començar</h2>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
@@ -66,9 +77,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 17l-5-5m0 0l5-5m-5 5H18" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-blue-800 dark:text-blue-300">Assaig de Tracció</h3>
+                        <h3 data-translate="tensile_test" class="text-xl font-bold text-blue-800 dark:text-blue-300">Assaig de Tracció</h3>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
+                    <p data-translate="tensile_desc" class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
                         Simula l'estirament d'una proveta fins a la seva fractura per obtenir el diagrama Força-Allargament.
                     </p>
                 </div>
@@ -85,9 +96,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M11 7l-5 5m0 0l5 5m-5-5h12" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-orange-800 dark:text-orange-300">Assaig de Compressió</h3>
+                        <h3 data-translate="compression_test" class="text-xl font-bold text-orange-800 dark:text-orange-300">Assaig de Compressió</h3>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
+                    <p data-translate="compression_desc" class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
                         Simula la compressió d'una proveta, típicament de formigó, fins al seu col·lapse.
                     </p>
                 </div>
@@ -103,9 +114,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-teal-800 dark:text-teal-300">Assaig de Flexió</h3>
+                        <h3 data-translate="flexion_test" class="text-xl font-bold text-teal-800 dark:text-teal-300">Assaig de Flexió</h3>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
+                    <p data-translate="flexion_desc" class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
                         Simula un assaig de flexió en tres punts sobre una biga simple per determinar la seva resistència.
                     </p>
                 </div>
@@ -121,9 +132,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-violet-800 dark:text-violet-300">Assaig de Torsió</h3>
+                        <h3 data-translate="torsion_test" class="text-xl font-bold text-violet-800 dark:text-violet-300">Assaig de Torsió</h3>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
+                    <p data-translate="torsion_desc" class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
                         Simula la torsió d'un eix fins a la seva fractura, obtenint el diagrama Moment-Angle.
                     </p>
                 </div>
@@ -139,9 +150,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-green-800 dark:text-green-300">Assaig de Resiliència</h3>
+                        <h3 data-translate="resilience_test" class="text-xl font-bold text-green-800 dark:text-green-300">Assaig de Resiliència</h3>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
+                    <p data-translate="resilience_desc" class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
                         Simula l'assaig d'impacte amb el Pèndol de Charpy per estudiar la transició dúctil-fràgil.
                     </p>
                 </div>
@@ -158,9 +169,9 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-red-800 dark:text-red-300">Assaig de Fatiga</h3>
+                        <h3 data-translate="fatigue_test" class="text-xl font-bold text-red-800 dark:text-red-300">Assaig de Fatiga</h3>
                     </div>
-                    <p class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
+                    <p data-translate="fatigue_desc" class="text-slate-600 dark:text-slate-400 mt-3 text-sm">
                         Simula l'aplicació de càrregues cícliques per determinar la vida útil d'un material (Corba S-N).
                     </p>
                 </div>
@@ -174,7 +185,25 @@
     <script>
         // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
         document.addEventListener('DOMContentLoaded', () => {
+            // Funcionalitat del botó de tema
             setupThemeToggler(document.getElementById('theme-toggle'));
+
+            // Funcionalitat del menú d'idioma
+            const langToggle = document.getElementById('lang-toggle');
+            const langMenu = document.getElementById('lang-menu');
+            langToggle.addEventListener('click', () => {
+                langMenu.classList.toggle('hidden');
+            });
+
+            // Tanca el menú si es fa clic fora
+            window.addEventListener('click', function(e) {
+                if (!langToggle.contains(e.target) && !langMenu.contains(e.target)) {
+                    langMenu.classList.add('hidden');
+                }
+            });
+
+            // Aplica les traduccions inicials
+            applyTranslations();
         });
     </script>
 

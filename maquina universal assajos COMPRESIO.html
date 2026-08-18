@@ -102,22 +102,29 @@
     <header class="bg-stone-800 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-orange-500 dark:border-orange-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Compresió</h1>
-                <p class="text-sm opacity-80 dark:text-slate-300">Assajos de Materials</p>
+                <h1 data-translate="compression_title" class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Compressió</h1>
+                <p data-translate="compression_subtitle" class="text-sm opacity-80 dark:text-slate-300">Assajos de Materials</p>
             </div>
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+            <div class="flex items-center gap-2">
+                <a data-translate="return_to_menu" href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
                 <!-- Botó de Tema -->
                 <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-stone-700 dark:hover:bg-slate-700 focus:outline-none">
-                    <!-- Icona Sol (per a tema fosc) -->
-                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <!-- Icona Lluna (per a tema clar) -->
-                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
+                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                 </button>
+                <!-- Menú Idioma -->
+                <div class="relative">
+                    <button id="lang-toggle" class="p-2 rounded-full text-slate-300 hover:bg-stone-700 dark:hover:bg-slate-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m4 13-4-4-4 4M19 17v-2a4 4 0 00-4-4H9M19 17h-4" /></svg>
+                    </button>
+                    <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-md shadow-lg py-1 z-20 border dark:border-slate-700">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('ca'); return false;">Català / Valencià</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('es'); return false;">Español</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('eu'); return false;">Euskara</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('gl'); return false;">Galego</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('en'); return false;">English</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -129,47 +136,47 @@
             
             <!-- Configuración -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-stone-200 dark:border-slate-700">
-                <h2 class="text-lg font-bold mb-3 text-orange-700 dark:text-orange-300 border-b border-stone-200 dark:border-slate-700 pb-2">1. Configuració de Probeta</h2>
+                <h2 data-translate="specimen_config_comp" class="text-lg font-bold mb-3 text-orange-700 dark:text-orange-300 border-b border-stone-200 dark:border-slate-700 pb-2">1. Configuració de Probeta</h2>
                 
                 <div class="grid grid-cols-1 gap-3 mb-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
+                        <label data-translate="material" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
                         <select id="materialSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white">
-                            <optgroup label="Materiales de Construcción (Frágiles)">
-                                <option value="concrete25">Formigó HA-25 (Convencional)</option>
-                                <option value="concrete50">Formigó HA-50 (Alta Resistencia)</option>
-                                <option value="mortar">Morter de Ciment (M-15)</option>
+                            <optgroup data-translate="concrete_fragile" label="Materials de Construcció (Fràgils)">
+                                <option data-translate="concrete25" value="concrete25">Formigó HA-25 (Convencional)</option>
+                                <option data-translate="concrete50" value="concrete50">Formigó HA-50 (Alta Resistència)</option>
+                                <option data-translate="mortar" value="mortar">Morter de Ciment (M-15)</option>
                             </optgroup>
-                            <optgroup label="Metales (Dúctiles)">
-                                <option value="aluminum">Aliatge d'Alumini</option>
-                                <option value="copper">Coure</option>
+                            <optgroup data-translate="metals_ductile" label="Metalls (Dúctils)">
+                                <option data-translate="aluminum" value="aluminum">Aliatge d'Alumini</option>
+                                <option data-translate="copper" value="copper">Coure</option>
                             </optgroup>
                         </select>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Altura ($H_0$) [mm]</label>
+                            <label data-translate="height" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Altura ($H_0$) [mm]</label>
                             <input type="number" id="heightInput" value="300" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white" min="100" max="300">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Diàmetre ($D_0$) [mm]</label>
+                            <label data-translate="diameter" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Diàmetre ($D_0$) [mm]</label>
                             <input type="number" id="diameterInput" value="150" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white" min="50" max="200">
                         </div>
                     </div>
-                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    <div data-translate="std_specimen_comp" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         * Probeta Cilíndrica Estandar ($15x30$ cm per defecte)
                     </div>
                 </div>
 
                 <div class="flex gap-2">
-                    <button id="btnStart" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-bold transition shadow-sm" onclick="startTest()">Iniciar Compresió</button>
-                    <button id="btnReset" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>Nova Probeta</button>
+                    <button data-translate="start_compression" id="btnStart" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-bold transition shadow-sm" onclick="startTest()">Iniciar Compressió</button>
+                    <button data-translate="new_specimen" id="btnReset" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>Nova Probeta</button>
                 </div>
             </div>
 
             <!-- Visualización de la Prensa -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-stone-200 dark:border-slate-700 flex-grow flex flex-col items-center justify-center min-h-[400px] relative">
-                <h3 class="absolute top-4 left-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">Premsa d'Assaos</h3>
+                <h3 data-translate="press_chamber" class="absolute top-4 left-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">Premsa d'Assajos</h3>
                 
                 <!-- Estructura Prensa -->
                 <div class="relative w-48 flex flex-col items-center mt-8">
@@ -206,8 +213,8 @@
             <!-- Gráfica -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-stone-200 dark:border-slate-700 h-96 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-bold text-orange-700 dark:text-orange-300">2. Gràfica Tensió - Deformació</h2>
-                    <div class="text-xs text-gray-500 dark:text-gray-400">
+                    <h2 data-translate="graph_title_comp" class="text-lg font-bold text-orange-700 dark:text-orange-300">2. Gràfica Tensió - Deformació</h2>
+                    <div data-translate="graph_subtitle_comp" class="text-xs text-gray-500 dark:text-gray-400">
                         Eje Y: Tensió (MPa) | Eje X: Acurtament (%)
                     </div>
                 </div>
@@ -220,14 +227,14 @@
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-stone-200 dark:border-slate-700 flex-grow">
                 <div class="flex justify-between items-end mb-4">
                     <div>
-                        <h2 class="text-lg font-bold text-orange-700 dark:text-orange-300">3. Registre de Dades</h2>
-                        <p class="text-sm text-slate-500 dark:text-slate-400">Valors negatius indiquen compresió (acurtament).</p>
+                        <h2 data-translate="data_acq_comp" class="text-lg font-bold text-orange-700 dark:text-orange-300">3. Registre de Dades</h2>
+                        <p data-translate="data_subtitle_comp" class="text-sm text-slate-500 dark:text-slate-400">Valors negatius indiquen compressió (acurtament).</p>
                     </div>
                     <button id="btnExport" disabled class="bg-stone-600 hover:bg-stone-700 disabled:bg-gray-300 text-white px-4 py-2 rounded flex items-center gap-2 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                         </svg>
-                        Descarregar CSV
+                        <span data-translate="download_csv">Descarregar CSV</span>
                     </button>
                 </div>
 
@@ -235,14 +242,14 @@
                     <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-100 dark:bg-slate-700 sticky top-0">
                             <tr>
-                                <th class="px-4 py-2">Força (kN)</th>
-                                <th class="px-4 py-2">Acurtament (mm)</th>
-                                <th class="px-4 py-2">Tensió (MPa)</th>
-                                <th class="px-4 py-2">Deformació (%)</th>
+                                <th data-translate="force_kn" class="px-4 py-2">Força (kN)</th>
+                                <th data-translate="shortening_mm" class="px-4 py-2">Acurtament (mm)</th>
+                                <th data-translate="stress_mpa" class="px-4 py-2">Tensió (MPa)</th>
+                                <th data-translate="strain_perc" class="px-4 py-2">Deformació (%)</th>
                             </tr>
                         </thead>
                         <tbody id="dataTableBody" class="dark:bg-slate-800">
-                            <tr><td colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">Sistema preparat. Posa probeta.</td></tr>
+                            <tr><td data-translate="system_ready" colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">Sistema preparat. Posa probeta.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -578,9 +585,23 @@
         init();
     </script>
     <script>
-        // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
+        // Funcionalitat dels menús i traduccions
         document.addEventListener('DOMContentLoaded', () => {
+            // Botó de tema
             setupThemeToggler(document.getElementById('theme-toggle'));
+
+            // Menú d'idioma
+            const langToggle = document.getElementById('lang-toggle');
+            const langMenu = document.getElementById('lang-menu');
+            langToggle.addEventListener('click', () => langMenu.classList.toggle('hidden'));
+            window.addEventListener('click', (e) => {
+                if (!langToggle.contains(e.target) && !langMenu.contains(e.target)) {
+                    langMenu.classList.add('hidden');
+                }
+            });
+
+            // Aplicar traduccions a l'inici
+            applyTranslations();
         });
     </script>
 </body>
