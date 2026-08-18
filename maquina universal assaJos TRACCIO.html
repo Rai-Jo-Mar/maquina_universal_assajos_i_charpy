@@ -32,6 +32,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Universal d'Assajos</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="common.js"></script>
+    <script>
+        applyInitialTheme();
+        tailwind.config = { darkMode: 'class' };
+    </script>
     <script>
         // Configuración estándar de MathJax 3
         window.MathJax = {
@@ -47,7 +52,6 @@
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script src="common.js"></script>
     <style>
         .machine-frame {
             background: linear-gradient(90deg, #2c3e50 0%, #bdc3c7 10%, #bdc3c7 90%, #2c3e50 100%);
@@ -57,28 +61,46 @@
             transform-origin: top center;
         }
         canvas {
-            border: 1px solid #e5e7eb;
-            background-color: #ffffff;
+            transition: background-color 0.3s;
+        }
+        .dark canvas {
+            background-color: #1f2937; /* Darker canvas background */
+            border-color: #374151; /* Darker border */
         }
         /* Estilo para cuando la probeta rompe */
         .broken {
             border-bottom: 2px dashed red !important;
             opacity: 0.7;
         }
+        /* Icones per al botó de tema */
+        .dark .sun-icon { display: block; }
+        .dark .moon-icon { display: none; }
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans">
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
 
     <!-- Header -->
-    <header class="bg-blue-900 text-white p-4 shadow-md">
+    <header class="bg-blue-900 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-blue-700 dark:border-blue-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold">Laboratori Virtual: Tracció</h1>
-                <p class="text-sm opacity-80">Assaig de Tracció Uniaxial</p>
+                <h1 class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Tracció</h1>
+                <p class="text-sm opacity-80 dark:text-slate-300">Assaig de Tracció Uniaxial</p>
             </div>
-            <div class="text-right text-sm hidden md:block">
-                <p>Mòdul: Assajos Físics</p>
-                <p>Simulació: Tracció Uniaxial</p>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+                <!-- Botó de Tema -->
+                <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-blue-800 dark:hover:bg-slate-700 focus:outline-none">
+                    <!-- Icona Sol (per a tema fosc) -->
+                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <!-- Icona Lluna (per a tema clar) -->
+                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
             </div>
         </div>
     </header>
@@ -86,16 +108,16 @@
     <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
         
         <!-- Panel Izquierdo: Configuración y Máquina -->
-        <div class="w-full lg:w-1/3 flex flex-col gap-4">
+        <div class="w-full lg:w-4/12 flex flex-col gap-4 dark:text-slate-200">
             
             <!-- Configuración -->
-            <div class="bg-white p-4 rounded-lg shadow border border-slate-200">
-                <h2 class="text-lg font-bold mb-3 text-blue-800 border-b pb-2">1. Configuració de la Probeta</h2>
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700">
+                <h2 class="text-lg font-bold mb-3 text-blue-800 dark:text-blue-300 border-b border-slate-200 dark:border-slate-700 pb-2">1. Configuració de la Probeta</h2>
                 
                 <div class="grid grid-cols-1 gap-3 mb-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-600">Material</label>
-                        <select id="materialSelect" class="w-full p-2 border rounded bg-slate-50">
+                        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
+                        <select id="materialSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white">
                             <option value="steel">Acer Estructural (S275)</option>
                             <option value="aluminum">Aleació Alumini (6061)</option>
                             <option value="copper">Coure Recocuit</option>
@@ -104,15 +126,15 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-sm font-medium text-slate-600">Longitut ($L_0$) [mm]</label>
-                            <input type="number" id="lengthInput" value="100" class="w-full p-2 border rounded" min="50" max="200">
+                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Longitut ($L_0$) [mm]</label>
+                            <input type="number" id="lengthInput" value="100" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white" min="50" max="200">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-600">Diàmetre ($D_0$) [mm]</label>
-                            <input type="number" id="diameterInput" value="10" class="w-full p-2 border rounded" min="5" max="20">
+                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Diàmetre ($D_0$) [mm]</label>
+                            <input type="number" id="diameterInput" value="10" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white" min="5" max="20">
                         </div>
                     </div>
-                    <div class="text-xs text-gray-500 mt-1">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         * Àrea ($S_0$): <span id="areaDisplay" class="font-bold">78.54</span> mm²
                     </div>
                 </div>
@@ -124,8 +146,8 @@
             </div>
 
             <!-- Visualización de la Máquina -->
-            <div class="bg-white p-4 rounded-lg shadow border border-slate-200 flex-grow flex flex-col items-center justify-center min-h-[300px] relative">
-                <h3 class="absolute top-4 left-4 text-xs font-bold text-gray-400 uppercase">Cambra d'assajos</h3>
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 flex-grow flex flex-col items-center justify-center min-h-[300px] relative">
+                <h3 class="absolute top-4 left-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">Cambra d'assajos</h3>
                 
                 <!-- Mordaza Superior (Fija) -->
                 <div class="w-32 h-12 machine-frame rounded-b-md shadow-lg z-10 flex items-center justify-center">
@@ -133,44 +155,44 @@
                 </div>
 
                 <!-- La Probeta -->
-                <div id="specimen" class="specimen bg-gray-400 w-4 relative z-0" style="height: 100px;">
+                <div id="specimen" class="specimen bg-gray-400 dark:bg-gray-500 w-4 relative z-0" style="height: 100px;">
                     <!-- Marca de calibración visual -->
                     <div class="absolute top-[25%] w-full h-px bg-black opacity-30"></div>
                     <div class="absolute bottom-[25%] w-full h-px bg-black opacity-30"></div>
                 </div>
 
                 <!-- Mordaza Inferior (Móvil) -->
-                <div id="lowerGrip" class="w-32 h-12 machine-frame rounded-t-md shadow-lg z-10 flex items-center justify-center transition-transform duration-75">
+                <div id="lowerGrip" class="w-32 h-12 machine-frame rounded-t-md shadow-lg z-10 flex items-center justify-center transition-transform duration-75 dark:bg-slate-700">
                     <div class="w-4 h-4 bg-gray-400 rounded-full"></div>
                 </div>
 
                 <div class="mt-8 text-center">
-                    <div class="text-3xl font-mono font-bold text-red-600" id="forceDisplay">0.00 kN</div>
-                    <div class="text-sm text-gray-500">Carrega Actual</div>
+                    <div class="text-3xl font-mono font-bold text-red-600 dark:text-red-500" id="forceDisplay">0.00 kN</div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">Carrega Actual</div>
                 </div>
             </div>
         </div>
 
         <!-- Panel Derecho: Gráfica y Datos -->
-        <div class="w-full lg:w-2/3 flex flex-col gap-4">
+        <div class="w-full lg:w-8/12 flex flex-col gap-4 dark:text-slate-200">
             
             <!-- Gráfica -->
-            <div class="bg-white p-4 rounded-lg shadow border border-slate-200 h-96 flex flex-col">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 h-96 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-bold text-blue-800">2. Diagrama Força - Allargament</h2>
-                    <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded border border-yellow-200">Simulación en tiempo real</span>
+                    <h2 class="text-lg font-bold text-blue-800 dark:text-blue-300">2. Diagrama Força - Allargament</h2>
+                    <span class="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded border border-yellow-200 dark:border-yellow-700">Simulación en tiempo real</span>
                 </div>
                 <div class="relative flex-grow w-full h-full">
-                    <canvas id="testCanvas" class="w-full h-full rounded"></canvas>
+                    <canvas id="testCanvas" class="w-full h-full rounded border border-slate-200 dark:border-slate-700"></canvas>
                 </div>
             </div>
 
             <!-- Datos y Exportación -->
-            <div class="bg-white p-4 rounded-lg shadow border border-slate-200 flex-grow">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 flex-grow">
                 <div class="flex justify-between items-end mb-4">
                     <div>
-                        <h2 class="text-lg font-bold text-blue-800">3. Adquisició de Dades</h2>
-                        <p class="text-sm text-slate-500">Dades crus obtinguts del sensor de carrega i extensòmetre.</p>
+                        <h2 class="text-lg font-bold text-blue-800 dark:text-blue-300">3. Adquisició de Dades</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Dades crus obtinguts del sensor de carrega i extensòmetre.</p>
                     </div>
                     <button id="btnExport" disabled class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white px-4 py-2 rounded flex items-center gap-2 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,8 +203,8 @@
                 </div>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-slate-700">
                             <tr>
                                 <th class="px-4 py-2">Temps (s)</th>
                                 <th class="px-4 py-2">Força (N)</th>
@@ -191,9 +213,9 @@
                                 <th class="px-4 py-2">Deformació (%)</th>
                             </tr>
                         </thead>
-                        <tbody id="dataTableBody">
+                        <tbody id="dataTableBody" class="dark:bg-slate-800">
                             <!-- Las filas se añadirán dinámicamente -->
-                            <tr><td colspan="5" class="text-center py-4">Esperant inici de l'assig...</td></tr>
+                            <tr class="dark:bg-slate-800"><td colspan="5" class="text-center py-4">Esperant inici de l'assig...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -204,11 +226,11 @@
     <script>
         // --- Configuración y Física de Materiales ---
         // Propiedades aproximadas para fines educativos (con aleatoriedad implementada luego)
-        const materials = {
-            steel: { name: 'Acero S275', E: 210000, yieldStress: 275, ultimateStress: 430, fractureStrain: 0.22, color: '#718096' },
-            aluminum: { name: 'Aluminio 6061', E: 69000, yieldStress: 276, ultimateStress: 310, fractureStrain: 0.12, color: '#CBD5E0' },
-            copper: { name: 'Cobre', E: 117000, yieldStress: 70, ultimateStress: 220, fractureStrain: 0.45, color: '#B7791F' },
-            polymer: { name: 'PVC', E: 3000, yieldStress: 45, ultimateStress: 55, fractureStrain: 0.80, color: '#EDF2F7' }
+        const materials = { // n: exponente de endurecimiento por deformación
+            steel: { name: 'Acero S275', E: 210000, yieldStress: 275, ultimateStress: 430, fractureStrain: 0.22, n: 0.15, color: '#718096' },
+            aluminum: { name: 'Aluminio 6061', E: 69000, yieldStress: 276, ultimateStress: 310, fractureStrain: 0.17, n: 0.05, color: '#CBD5E0' },
+            copper: { name: 'Cobre', E: 117000, yieldStress: 70, ultimateStress: 220, fractureStrain: 0.45, n: 0.4, color: '#B7791F' },
+            polymer: { name: 'PVC', E: 3000, yieldStress: 45, ultimateStress: 55, fractureStrain: 0.80, n: 0.5, color: '#EDF2F7' }
         };
 
         let state = {
@@ -254,6 +276,11 @@
             window.addEventListener('resize', () => {
                 resizeCanvas();
                 if(state.data.length > 0) drawChart();
+                else drawGrid();
+            });
+
+            window.addEventListener('themeChanged', () => {
+                if (state.data.length > 0) drawChart();
                 else drawGrid();
             });
             
@@ -342,29 +369,32 @@
             const elasticLimitStrain = mat.yieldStress / mat.E;
             
             if (state.strain < elasticLimitStrain) {
+                // --- ZONA ELÁSTICA (Ley de Hooke) ---
                 stress = mat.E * state.strain;
             } else if (state.strain < mat.fractureStrain) {
-                // Zona Plástica (Curva simple cuadrática hasta UTS y luego caída leve)
-                // Normalizamos la deformación plástica entre 0 y 1
-                const plasticStrain = state.strain - elasticLimitStrain;
-                const plasticRange = mat.fractureStrain - elasticLimitStrain;
-                const ratio = plasticStrain / plasticRange;
+                // --- ZONA PLÁSTICA (Endurecimiento y Estricción) ---
                 
-                // Curva que sube de Yield a Ultimate y luego puede bajar un poco
-                // Aproximación polinómica simple para forma visual correcta
-                const stressRange = mat.ultimateStress - mat.yieldStress;
-                
-                // Curva de endurecimiento por deformación
-                // Sube rápido al principio, luego se aplana (exponente < 1)
-                let plasticStress = mat.yieldStress + stressRange * (1 - Math.pow(1 - ratio, 2));
-                
-                // Simular estricción (caída de tensión) al final (último 10% del ensayo)
-                if (ratio > 0.9) {
-                   const neckingFactor = (ratio - 0.9) * 10; // 0 a 1
-                   plasticStress = plasticStress * (1 - 0.15 * neckingFactor);
-                }
+                // 1. Localizamos el punto de máxima tensión (UTS) en la deformación.
+                // Lo situamos aproximadamente al 60% del recorrido plástico para metales.
+                const utsStrain = elasticLimitStrain + (mat.fractureStrain - elasticLimitStrain) * (mat.name === 'PVC' ? 0.8 : 0.6);
 
-                stress = plasticStress;
+                const plasticStrain = state.strain - elasticLimitStrain;
+
+                if (state.strain < utsStrain) {
+                    // 2. Endurecimiento por deformación (desde fluencia hasta UTS)
+                    // Usamos una ley de potencias (tipo Hollomon) para una curva más realista.
+                    const hardeningRange = utsStrain - elasticLimitStrain;
+                    const ratio = plasticStrain / hardeningRange;
+                    stress = mat.yieldStress + (mat.ultimateStress - mat.yieldStress) * Math.pow(ratio, mat.n);
+                } else {
+                    // 3. Zona de Estricción (Necking)
+                    // La tensión ingenieril decrece mientras la real aumenta.
+                    const neckingStrain = state.strain - utsStrain;
+                    const neckingRange = mat.fractureStrain - utsStrain;
+                    const ratio = neckingStrain / neckingRange;
+                    // Caída cuadrática desde UTS hasta un 90% de UTS en la fractura.
+                    stress = mat.ultimateStress * (1 - 0.1 * Math.pow(ratio, 2));
+                }
             } else {
                 // Rotura
                 endTest();
@@ -422,13 +452,13 @@
             drawChart();
 
             // Tabla (Solo añadir cada 10 frames para no saturar el DOM)
-            if (state.data.length % 5 === 0) {
-                const row = `<tr>
+            if (state.data.length % 10 === 0) {
+                const row = `<tr class="dark:hover:bg-slate-700">
                     <td class="px-4 py-1">${dp.t.toFixed(1)}</td>
                     <td class="px-4 py-1 font-mono">${dp.F.toFixed(1)}</td>
                     <td class="px-4 py-1 font-mono">${dp.dL.toFixed(3)}</td>
-                    <td class="px-4 py-1 text-gray-400">${dp.sigma.toFixed(1)}</td>
-                    <td class="px-4 py-1 text-gray-400">${dp.epsilon.toFixed(2)}</td>
+                    <td class="px-4 py-1 text-gray-400 dark:text-gray-500">${dp.sigma.toFixed(1)}</td>
+                    <td class="px-4 py-1 text-gray-400 dark:text-gray-500">${dp.epsilon.toFixed(2)}</td>
                 </tr>`;
                 // Insertar al principio es costoso, mejor al final pero scroll
                 els.tableBody.insertAdjacentHTML('afterbegin', row);
@@ -472,7 +502,7 @@
             updateVisuals(); // Restaurar ancho
             
             els.forceDisplay.textContent = "0.00 kN";
-            els.tableBody.innerHTML = '<tr><td colspan="5" class="text-center py-4">Listo para nuevo ensayo</td></tr>';
+            els.tableBody.innerHTML = '<tr class="dark:bg-slate-800"><td colspan="5" class="text-center py-4">Listo para nuevo ensayo</td></tr>';
             
             ctx.clearRect(0, 0, els.canvas.width, els.canvas.height);
             drawGrid();
@@ -484,26 +514,31 @@
             const h = els.canvas.height;
             const p = 40; // padding
 
-            ctx.fillStyle = '#fff';
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? '#374151' : '#e5e7eb';
+            const textColor = isDark ? '#d1d5db' : '#374151';
+            const bgColor = isDark ? '#1f2937' : '#ffffff';
+
+            ctx.fillStyle = bgColor;
             ctx.fillRect(0,0,w,h);
             
-            ctx.strokeStyle = '#e5e7eb';
+            ctx.strokeStyle = gridColor;
             ctx.lineWidth = 1;
             ctx.beginPath();
             // Rejilla simple
-            for(let x=p; x<w; x+=50) { ctx.moveTo(x,0); ctx.lineTo(x,h-p); }
-            for(let y=h-p; y>0; y-=50) { ctx.moveTo(p,y); ctx.lineTo(w,y); }
+            for(let x=p; x<w; x+=60) { ctx.moveTo(x,0); ctx.lineTo(x,h-p); }
+            for(let y=h-p; y>0; y-=40) { ctx.moveTo(p,y); ctx.lineTo(w,y); }
             ctx.stroke();
 
             // Ejes
-            ctx.strokeStyle = '#000';
+            ctx.strokeStyle = textColor;
             ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(p, 0); ctx.lineTo(p, h-p); ctx.lineTo(w, h-p);
             ctx.stroke();
 
             // Etiquetas
-            ctx.fillStyle = '#000';
+            ctx.fillStyle = textColor;
             ctx.font = '12px Arial';
             ctx.textAlign = 'center';
             ctx.fillText("Alargamiento (mm)", w/2, h-10);
@@ -546,7 +581,8 @@
             ctx.stroke();
 
             // Etiquetas dinámicas de escala máxima
-            ctx.fillStyle = '#666';
+            const textColor = document.documentElement.classList.contains('dark') ? '#9ca3af' : '#6b7280';
+            ctx.fillStyle = textColor;
             ctx.font = '10px Arial';
             ctx.textAlign = 'right';
             ctx.fillText(maxForce.toFixed(0), p-5, 15);
@@ -557,6 +593,12 @@
         // Start
         init();
 
+    </script>
+    <script>
+        // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
+        document.addEventListener('DOMContentLoaded', () => {
+            setupThemeToggler(document.getElementById('theme-toggle'));
+        });
     </script>
 </body>
 </html>

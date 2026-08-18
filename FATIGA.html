@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Assaig de Fatiga</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="common.js"></script>
+    <script>
+        applyInitialTheme();
+        tailwind.config = { darkMode: 'class' };
+    </script>
+    <script>
+        // Configuración estándar de MathJax 3
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                tags: 'none'
+            },
+            options: {
+                processHtmlClass: 'mathjax-render'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        .panel-header {
+            background: linear-gradient(90deg, #991b1b 0%, #b91c1c 100%);
+            color: white;
+        }
+        .specimen {
+            transition: transform 0.05s ease-in-out;
+        }
+        .fracture-line {
+            stroke: #ef4444;
+            stroke-width: 2px;
+            stroke-dasharray: 4 4;
+            animation: dash 1s linear infinite;
+        }
+        @keyframes dash { to { stroke-dashoffset: -8; } }        /* Icones per al botó de tema */
+        .dark .sun-icon { display: block; }
+        .dark .moon-icon { display: none; }
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
+    </style>
+</head>
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans transition-colors duration-300">
+
+    <!-- Header -->
+    <header class="bg-red-900 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-red-500 dark:border-red-800">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Fatiga</h1>
+                <p class="text-sm opacity-80 dark:text-slate-300">Assaig de Càrrega Cíclica (Corba S-N)</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-sm hover:underline dark:text-slate-300">Tornar al menú</a>
+                <!-- Botó de Tema -->
+                <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-red-800 dark:hover:bg-slate-700 focus:outline-none">
+                    <!-- Icona Sol (per a tema fosc) -->
+                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <!-- Icona Lluna (per a tema clar) -->
+                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        
+        <!-- Panel Esquerre: Controls i Visualització -->
+        <div class="w-full lg:w-5/12 flex flex-col gap-4 dark:text-slate-200">
+            
+            <!-- Configuració -->
+            <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div class="panel-header p-3 font-bold">1. Paràmetres de Càrrega Cíclica</div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Material</label>
+                        <select id="materialSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white">
+                            <option value="steel">Acer al Carboni</option>
+                            <option value="aluminum">Aliatge d'Alumini</option>
+                            <option value="titanium">Aliatge de Titani</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1 dark:text-slate-300">
+                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Tensió Màxima ($\sigma_{max}$)</label>
+                            <span id="maxStressDisplay" class="font-bold text-red-700 dark:text-red-400">300 MPa</span>
+                        </div>
+                        <input type="range" id="maxStressInput" min="50" max="600" value="300" step="10" class="w-full dark:bg-slate-700">
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1 dark:text-slate-300">
+                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Ratio de Tensions (R = $\sigma_{min} / \sigma_{max}$)</label>
+                            <span id="rRatioDisplay" class="font-bold text-red-700 dark:text-red-400">-1.0</span>
+                        </div>
+                        <input type="range" id="rRatioInput" min="-1" max="0.5" value="-1" step="0.1" class="w-full dark:bg-slate-700">
+                        <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-1">
+                            <span>Tracció-Compressió (R=-1)</span>
+                            <span>Tracció-Tracció (R>0)</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-red-50 p-3 rounded border border-red-100 text-xs text-red-900 space-y-1">
+                        <div class="flex justify-between"><span>Tensió Mitjana ($\sigma_m$):</span><span id="meanStressDisplay" class="font-mono font-bold">0 MPa</span></div>
+                        <div class="flex justify-between"><span>Amplitud de Tensió ($\sigma_a$):</span><span id="amplitudeStressDisplay" class="font-mono font-bold">300 MPa</span></div>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button id="btnStart" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2 rounded font-bold transition shadow-md">▶ Iniciar Assaig</button>
+                        <button id="btnReset" class="w-1/3 bg-slate-500 hover:bg-slate-600 text-white py-2 rounded font-bold transition" disabled>↻ Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visualització -->
+            <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700 p-4 flex-grow flex flex-col items-center justify-center min-h-[250px] relative">
+                <div class="w-full text-center mb-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">Nombre de Cicles (N)</div>
+                    <div id="cycleCountDisplay" class="text-5xl font-mono font-bold text-slate-800 dark:text-slate-100">0</div>
+                </div>
+                
+                <!-- Probeta simplificada -->
+                <div class="w-full h-16 bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
+                    <div id="specimen" class="w-40 h-8 bg-gray-400 dark:bg-gray-500 rounded specimen relative">
+                        <div id="fracture" class="absolute top-0 left-1/2 w-px h-full bg-transparent"></div>
+                    </div>
+                </div>
+
+                <div class="w-full text-center mt-4">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">Tensió Actual</div>
+                    <div id="currentStressDisplay" class="text-2xl font-mono font-bold text-red-700 dark:text-red-400">0 MPa</div>
+                </div>
+
+                <div id="failureText" class="absolute inset-0 bg-black/70 flex items-center justify-center text-white text-3xl font-bold hidden">
+                    FALLADA PER FATIGA
+                </div>
+            </div>
+        </div> 
+
+        <!-- Panel Dret: Gràfica S-N i Dades -->
+        <div class="w-full lg:w-7/12 flex flex-col gap-4">
+            
+            <!-- Gràfica S-N -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 h-96 flex flex-col">
+                <h2 class="text-lg font-bold text-red-800 dark:text-red-300 mb-2">2. Diagrama S-N (Wöhler)</h2>
+                <div class="text-xs text-slate-500 dark:text-slate-400 mb-2 space-y-1">
+                    <p>Representa l'Amplitud de Tensió ($\sigma_a$) enfront del Nombre de Cicles fins a la fallada (N). L'eix X és logarítmic.</p>
+                    <p class="bg-slate-50 dark:bg-slate-700 p-1 border dark:border-slate-600 rounded">
+                        <span class="font-bold">Objectiu:</span> Realitza assajos a diferents nivells de $\sigma_a$ per construir la corba. Observaràs que a menor tensió, el material aguanta molts més cicles abans de trencar-se.
+                    </p>
+                </div>
+                <div class="relative flex-grow w-full h-full dark:bg-slate-900">
+                    <canvas id="chartCanvas" class="w-full h-full rounded border border-gray-100 dark:border-slate-700"></canvas>
+                </div>
+            </div>
+
+            <!-- Taula de Dades -->
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 flex-grow">
+                <div class="flex justify-between items-end mb-3">
+                    <h2 class="text-lg font-bold text-red-800 dark:text-red-300">3. Resultats dels Assajos</h2>
+                    <div class="flex items-center gap-4">
+                        <button id="btnExport" disabled class="bg-red-800 hover:bg-red-900 disabled:bg-gray-300 text-white px-3 py-2 rounded text-sm">Descarregar CSV</button>
+                        <button id="btnClear" class="text-red-600 hover:text-red-800 text-xs font-bold underline">Netejar Gràfica</button>
+                    </div>
+                </div>
+                <div class="overflow-y-auto h-48 border rounded">
+                    <table class="w-full text-sm text-left text-gray-600 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-100 dark:bg-slate-700 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2">Material</th>
+                                <th class="px-4 py-2">$\sigma_a$ (MPa)</th>
+                                <th class="px-4 py-2">R</th>
+                                <th class="px-4 py-2">Cicles (N)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody" class="dark:bg-slate-800">
+                            <tr><td colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">Realitza assajos per poblar la gràfica.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Propietats de Fatiga dels Materials ---
+        // Model de Basquin: σ_a = σ_f' * (2N)^b
+        const materials = {
+            steel: { 
+                name: 'Acer', 
+                UTS: 550, // Ultimate Tensile Strength (MPa)
+                sigma_f_prime: 920, // Coeficient de resistència a la fatiga
+                b: -0.106, // Exponent de Basquin
+                endurance_limit: 200, // Límit de fatiga (MPa)
+                color: '#64748b'
+            },
+            aluminum: { 
+                name: 'Alumini', 
+                UTS: 310,
+                sigma_f_prime: 450,
+                b: -0.09,
+                endurance_limit: null, // No tenen un límit clar
+                color: '#d1d5db'
+            },
+            titanium: {
+                name: 'Titani',
+                UTS: 950,
+                sigma_f_prime: 1200,
+                b: -0.07,
+                endurance_limit: 450,
+                color: '#a78bfa'
+            }
+        };
+
+        let state = {
+            running: false,
+            cycles: 0,
+            time: 0,
+            results: [], // Guarda els punts (N, S) de cada assaig
+            timer: null,
+            currentTest: {
+                mat: null,
+                sigma_max: 300,
+                sigma_min: -300,
+                sigma_a: 300,
+                sigma_m: 0,
+                R: -1,
+                cyclesToFailure: 0
+            }
+        };
+
+        // --- Elements del DOM ---
+        const els = {
+            matSelect: document.getElementById('materialSelect'),
+            maxStressInput: document.getElementById('maxStressInput'),
+            maxStressDisp: document.getElementById('maxStressDisplay'),
+            rRatioInput: document.getElementById('rRatioInput'),
+            rRatioDisp: document.getElementById('rRatioDisplay'),
+            meanStressDisp: document.getElementById('meanStressDisplay'),
+            amplitudeStressDisp: document.getElementById('amplitudeStressDisplay'),
+            btnStart: document.getElementById('btnStart'),
+            btnReset: document.getElementById('btnReset'),
+            btnExport: document.getElementById('btnExport'),
+            btnClear: document.getElementById('btnClear'),
+            cycleCountDisp: document.getElementById('cycleCountDisplay'),
+            currentStressDisp: document.getElementById('currentStressDisplay'),
+            specimen: document.getElementById('specimen'),
+            fracture: document.getElementById('fracture'),
+            failureText: document.getElementById('failureText'),
+            chartCanvas: document.getElementById('chartCanvas'),
+            dataTableBody: document.getElementById('dataTableBody')
+        };
+
+        const ctx = els.chartCanvas.getContext('2d');
+
+        // --- Inicialització ---
+        function init() {
+            updateParameters();
+            drawChart();
+
+            els.maxStressInput.addEventListener('input', updateParameters);
+            els.rRatioInput.addEventListener('input', updateParameters);
+            els.matSelect.addEventListener('change', updateParameters);
+
+            els.btnStart.addEventListener('click', startTest);
+            els.btnReset.addEventListener('click', resetTest);
+            els.btnClear.addEventListener('click', clearResults);
+            
+            els.btnExport.addEventListener('click', () => {
+                if (state.results.length === 0) return;
+                const headers = ["Material", "Amplitud Tensió (MPa)", "Ratio R", "Cicles a Fallada (N)"];
+                const filename = `Assajos_Fatiga.csv`;
+                const rowFormatter = (d) => `${d.mat};${d.sigma_a.toFixed(1)};${d.R.toFixed(2)};${Math.round(d.N)}`;
+                exportCustomCSV(filename, headers, state.results, rowFormatter);
+            });
+        }
+
+        window.addEventListener('themeChanged', () => {
+            drawChart();
+        });
+
+
+        function updateParameters() {
+            const sigma_max = parseFloat(els.maxStressInput.value);
+            const R = parseFloat(els.rRatioInput.value);
+            const sigma_min = sigma_max * R;
+            
+            const sigma_a = (sigma_max - sigma_min) / 2;
+            const sigma_m = (sigma_max + sigma_min) / 2;
+
+            state.currentTest.sigma_max = sigma_max;
+            state.currentTest.sigma_min = sigma_min;
+            state.currentTest.sigma_a = sigma_a;
+            state.currentTest.sigma_m = sigma_m;
+            state.currentTest.R = R;
+            state.currentTest.mat = materials[els.matSelect.value];
+
+            els.maxStressDisp.textContent = `${sigma_max.toFixed(0)} MPa`;
+            els.rRatioDisp.textContent = R.toFixed(1);
+            els.meanStressDisp.textContent = `${sigma_m.toFixed(1)} MPa`;
+            els.amplitudeStressDisp.textContent = `${sigma_a.toFixed(1)} MPa`;
+            
+            // Validació: La tensió màxima no pot superar la resistència del material
+            if (sigma_max > state.currentTest.mat.UTS) {
+                els.maxStressDisp.classList.add('text-yellow-500');
+                els.maxStressDisp.title = "Atenció: La tensió màxima supera la resistència a tracció (UTS). Fallada immediata esperada.";
+            } else {
+                els.maxStressDisp.classList.remove('text-yellow-500');
+                els.maxStressDisp.title = "";
+            }
+        }
+
+        // --- Lògica de la Simulació ---
+        function calculateCyclesToFailure() {
+            const { sigma_a, mat } = state.currentTest;
+
+            // Si la tensió màxima supera la resistència, la fallada és instantània (N=1)
+            if (state.currentTest.sigma_max >= mat.UTS) {
+                return 1;
+            }
+
+            // Si l'amplitud està per sota del límit de fatiga, no hi ha fallada (vida infinita)
+            if (mat.endurance_limit && sigma_a < mat.endurance_limit) {
+                return Infinity;
+            }
+
+            // Càlcul amb la Llei de Basquin: N = 0.5 * (σ_a / σ_f')^(1/b)
+            const N = 0.5 * Math.pow(sigma_a / mat.sigma_f_prime, 1 / mat.b);
+            return N;
+        }
+
+        function startTest() {
+            if (state.running) return;
+            
+            resetVisuals();
+            updateParameters();
+            state.currentTest.cyclesToFailure = calculateCyclesToFailure();
+
+            // Bloquejar controls
+            [els.matSelect, els.maxStressInput, els.rRatioInput, els.btnStart].forEach(e => e.disabled = true);
+            els.btnReset.disabled = false;
+
+            state.running = true;
+            state.cycles = 0;
+            state.time = 0;
+            
+            state.timer = requestAnimationFrame(loop);
+        }
+
+        function loop() {
+            if (!state.running) return;
+
+            // Simulem el pas del temps i els cicles
+            const cyclesPerFrame = Math.max(1, Math.pow(10, Math.floor(Math.log10(state.cycles + 1))));
+            state.cycles += cyclesPerFrame;
+            state.time += 0.016;
+
+            // Actualitzar UI
+            const currentStress = state.currentTest.sigma_m + state.currentTest.sigma_a * Math.sin(state.time * 20);
+            els.cycleCountDisp.textContent = formatCycles(state.cycles);
+            els.currentStressDisp.textContent = `${currentStress.toFixed(0)} MPa`;
+
+            // Animació de la proveta
+            const strainVisual = currentStress / state.currentTest.mat.UTS; // Deformació visual
+            els.specimen.style.transform = `scaleX(${1 + strainVisual * 0.1})`;
+
+            // Comprovar fallada
+            if (state.cycles >= state.currentTest.cyclesToFailure) {
+                endTest(state.currentTest.cyclesToFailure);
+                return;
+            }
+
+            // Comprovar si s'ha superat el límit de la simulació (run-out)
+            if (state.cycles > 10_000_000) {
+                endTest(Infinity);
+                return;
+            }
+
+            requestAnimationFrame(loop);
+        }
+
+        function endTest(failureCycles) {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+
+            const finalCycles = isFinite(failureCycles) ? failureCycles : 10_000_000;
+            els.cycleCountDisp.textContent = formatCycles(finalCycles);
+            
+            if (isFinite(failureCycles)) {
+                els.failureText.classList.remove('hidden');
+                els.fracture.classList.add('fracture-line');
+                els.specimen.style.transform = 'scaleX(1)';
+                els.currentStressDisp.textContent = '---';
+            } else {
+                els.cycleCountDisp.textContent = '> 10,000,000';
+                els.currentStressDisp.textContent = 'No Falla';
+            }
+
+            // Guardar i mostrar resultats
+            const resultPoint = {
+                mat: state.currentTest.mat.name,
+                color: state.currentTest.mat.color,
+                sigma_a: state.currentTest.sigma_a,
+                R: state.currentTest.R,
+                N: finalCycles
+            };
+            state.results.push(resultPoint);
+            addResultToTable(resultPoint);
+            drawChart();
+            
+            els.btnExport.disabled = false;
+        }
+
+        function resetTest() {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+            resetVisuals();
+            [els.matSelect, els.maxStressInput, els.rRatioInput, els.btnStart].forEach(e => e.disabled = false);
+            els.btnReset.disabled = true;
+        }
+
+        function resetVisuals() {
+            els.cycleCountDisp.textContent = '0';
+            els.currentStressDisp.textContent = '0 MPa';
+            els.specimen.style.transform = 'scaleX(1)';
+            els.failureText.classList.add('hidden');
+            els.fracture.classList.remove('fracture-line');
+        }
+
+        function clearResults() {
+            state.results = [];
+            els.dataTableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-400">Dades esborrades.</td></tr>';
+            els.btnExport.disabled = true;
+            drawChart();
+        }
+
+        function addResultToTable(dp) {
+            const row = `
+                <tr class="border-b hover:bg-gray-50">
+                    <td class="px-4 py-2 font-bold" style="color:${dp.color}">${dp.mat}</td>
+                    <td class="px-4 py-2 font-mono">${dp.sigma_a.toFixed(1)}</td>
+                    <td class="px-4 py-2 font-mono">${dp.R.toFixed(1)}</td>
+                    <td class="px-4 py-2 font-mono font-bold">${formatCycles(dp.N)}</td>
+                </tr>`;
+            if (els.dataTableBody.children[0]?.textContent.includes('Realitza assajos')) {
+                els.dataTableBody.innerHTML = '';
+            }
+            els.dataTableBody.insertAdjacentHTML('afterbegin', row);
+        }
+
+        function formatCycles(num) {
+            if (!isFinite(num)) return '∞';
+            if (num < 1000) return Math.round(num).toString();
+            return Math.round(num).toExponential(1).replace('+', '');
+        }
+
+        // --- Dibuix de la Gràfica S-N ---
+        function drawChart() {
+            const w = els.chartCanvas.width = els.chartCanvas.offsetWidth;
+            const h = els.chartCanvas.height = els.chartCanvas.offsetHeight;
+            const p = { top: 20, right: 20, bottom: 40, left: 50 };
+
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? '#374151' : '#e5e7eb'; // Tailwind gray-700 / gray-200
+            const textColor = isDark ? '#d1d5db' : '#374151'; // Tailwind gray-300 / gray-700
+            const bgColor = isDark ? '#1f2937' : '#ffffff'; // Tailwind gray-800 / white
+
+            // Escales
+            const minN = 1, maxN = 1e7;
+            const maxS = 600;
+
+            const getX = (N) => p.left + (Math.log10(N) / Math.log10(maxN)) * (w - p.left - p.right);
+            const getY = (S) => h - p.bottom - (S / maxS) * (h - p.top - p.bottom);
+            ctx.clearRect(0, 0, w, h);
+            ctx.fillStyle = bgColor; // Set background color
+            ctx.fillRect(0, 0, w, h);
+
+            // Dibuixar eixos i reixeta
+            ctx.strokeStyle = gridColor;
+            ctx.lineWidth = 1;
+            ctx.font = '10px sans-serif';
+            ctx.fillStyle = textColor; // Set text color
+            // Eix Y (Lineal)
+            for (let i = 0; i <= 6; i++) {
+                const s = i * 100;
+                const y = getY(s);
+                ctx.beginPath(); ctx.moveTo(p.left, y); ctx.lineTo(w - p.right, y); ctx.stroke();
+                ctx.fillText(`${s}`, p.left - 25, y + 3);
+            }
+            // Eix X (Logarítmic)
+            for (let i = 0; i <= 7; i++) {
+                const n = Math.pow(10, i);
+                const x = getX(n);
+                ctx.beginPath(); ctx.moveTo(x, p.top); ctx.lineTo(x, h - p.bottom); ctx.stroke();
+                ctx.fillText(`1e${i}`, x, h - p.bottom + 15);
+            }
+
+            // Dibuixar etiquetes dels eixos
+            ctx.save();
+            ctx.translate(15, h / 2); ctx.rotate(-Math.PI / 2);
+            ctx.textAlign = 'center'; ctx.fillText('Amplitud de Tensió, σa (MPa)', 0, 0);
+            ctx.restore();
+            ctx.textAlign = 'center'; ctx.fillText('Cicles fins a Fallada, N (log scale)', w / 2, h - 10);
+
+            // Dibuixar corba teòrica del material seleccionat
+            const mat = materials[els.matSelect.value];
+            ctx.beginPath();
+            ctx.strokeStyle = mat.color;
+            ctx.globalAlpha = 0.3;
+            ctx.lineWidth = 3;
+            for (let n = 100; n <= maxN; n *= 1.2) {
+                const sigma_a_calc = mat.sigma_f_prime * Math.pow(2 * n, mat.b);
+                let final_sigma = sigma_a_calc;
+                if (mat.endurance_limit && sigma_a_calc < mat.endurance_limit) {
+                    final_sigma = mat.endurance_limit;
+                }
+                const x = getX(n);
+                const y = getY(final_sigma);
+                if (n === 100) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                if (final_sigma === mat.endurance_limit) break;
+            }
+            ctx.stroke();
+            ctx.globalAlpha = 1.0;
+
+            // Dibuixar punts dels resultats
+            state.results.forEach(dp => {
+                const x = getX(dp.N);
+                const y = getY(dp.sigma_a);
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                ctx.fillStyle = dp.color;
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.stroke();
+            });
+        }
+
+        init();
+    </script>
+    <script>
+        // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
+        document.addEventListener('DOMContentLoaded', () => {
+            setupThemeToggler(document.getElementById('theme-toggle'));
+        });
+    </script>
+</body>
+</html>

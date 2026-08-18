@@ -51,3 +51,38 @@ function exportCustomCSV(filename, headers, data, rowFormatter) {
     a.click();
     document.body.removeChild(a);
 }
+
+// --- Gestió del Tema (Mode Clar/Fosc) ---
+
+/**
+ * Aplica el tema guardat a localStorage o el preferit del sistema.
+ * Aquesta funció s'ha de cridar des d'un script a l'<head> per evitar el "flash of unstyled content".
+ */
+function applyInitialTheme() {
+    const isDarkMode = localStorage.theme === 'dark' || 
+                       (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (isDarkMode) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+}
+
+/**
+ * Configura el botó per canviar entre tema clar i fosc.
+ * @param {HTMLElement} button - L'element del botó que controlarà el tema.
+ */
+function setupThemeToggler(button) {
+    button.addEventListener('click', () => {
+        if (document.documentElement.classList.toggle('dark')) {
+            localStorage.theme = 'dark';
+        } else {
+            localStorage.theme = 'light';
+        }
+        // Disparem un esdeveniment personalitzat per si les gràfiques necessiten redibuixar-se.
+        window.dispatchEvent(new CustomEvent('themeChanged'));
+    });
+}
+
+// Per assegurar que s'aplica el tema el més aviat possible,
+// la crida a applyInitialTheme() es farà directament a cada HTML.

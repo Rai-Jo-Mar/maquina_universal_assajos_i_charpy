@@ -33,6 +33,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Assajos Compresió</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="common.js"></script>
+    <script>
+        applyInitialTheme();
+        tailwind.config = { darkMode: 'class' };
+    </script>
     <script>
         // Configuración estándar de MathJax 3
         window.MathJax = {
@@ -48,8 +53,6 @@
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
-    <script src="common.js"></script>
 
     <style>
         .machine-frame {
@@ -80,23 +83,41 @@
             background-color: #ffffff;
         }
         .cracked {
-            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10 L30 40 L20 80 M60 10 L50 50 L80 90' stroke='black' stroke-width='1' fill='none' opacity='0.5'/%3E%3C/svg%3E") !important;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10 L30 40 L20 80 M60 10 L50 50 L80 90' stroke='currentColor' stroke-width='1' fill='none' opacity='0.5'/%3E%3C/svg%3E") !important;
             opacity: 0.8;
         }
+        .dark .cracked {
+            color: #d1d5db; /* Light gray for cracks in dark mode */
+        }
+        /* Icones per al botó de tema */
+        .dark .sun-icon { display: block; }
+        .dark .moon-icon { display: none; }
+        .sun-icon { display: none; }
+        .moon-icon { display: block; }
     </style>
 </head>
-<body class="bg-stone-100 text-stone-800 font-sans">
+<body class="bg-stone-100 dark:bg-slate-900 text-stone-800 dark:text-slate-200 font-sans transition-colors duration-300">
 
     <!-- Header -->
-    <header class="bg-stone-800 text-white p-4 shadow-md border-b-4 border-orange-500">
+    <header class="bg-stone-800 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-orange-500 dark:border-orange-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold">Laboratori Virtual: Compresió</h1>
-                <p class="text-sm opacity-80">Assajos de Materials</p>
+                <h1 class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Compresió</h1>
+                <p class="text-sm opacity-80 dark:text-slate-300">Assajos de Materials</p>
             </div>
-            <div class="text-right text-sm hidden md:block">
-                <p>Módul: Assajos Físics</p>
-                <p>Simulació: Premsa Hidràulica</p>
+            <div class="flex items-center gap-4">
+                <a href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+                <!-- Botó de Tema -->
+                <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-stone-700 dark:hover:bg-slate-700 focus:outline-none">
+                    <!-- Icona Sol (per a tema fosc) -->
+                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <!-- Icona Lluna (per a tema clar) -->
+                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
             </div>
         </div>
     </header>
@@ -104,16 +125,16 @@
     <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
         
         <!-- Panel Izquierdo: Configuración y Máquina -->
-        <div class="w-full lg:w-1/3 flex flex-col gap-4">
+        <div class="w-full lg:w-4/12 flex flex-col gap-4 dark:text-slate-200">
             
             <!-- Configuración -->
-            <div class="bg-white p-4 rounded-lg shadow border border-stone-200">
-                <h2 class="text-lg font-bold mb-3 text-orange-700 border-b pb-2">1. Configuració de Probeta</h2>
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-stone-200 dark:border-slate-700">
+                <h2 class="text-lg font-bold mb-3 text-orange-700 dark:text-orange-300 border-b border-stone-200 dark:border-slate-700 pb-2">1. Configuració de Probeta</h2>
                 
                 <div class="grid grid-cols-1 gap-3 mb-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-600">Material</label>
-                        <select id="materialSelect" class="w-full p-2 border rounded bg-stone-50">
+                        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
+                        <select id="materialSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white">
                             <optgroup label="Materiales de Construcción (Frágiles)">
                                 <option value="concrete25">Formigó HA-25 (Convencional)</option>
                                 <option value="concrete50">Formigó HA-50 (Alta Resistencia)</option>
@@ -127,15 +148,15 @@
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-sm font-medium text-slate-600">Altura ($H_0$) [mm]</label>
-                            <input type="number" id="heightInput" value="300" class="w-full p-2 border rounded" min="100" max="300">
+                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Altura ($H_0$) [mm]</label>
+                            <input type="number" id="heightInput" value="300" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white" min="100" max="300">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-600">Diàmetre ($D_0$) [mm]</label>
-                            <input type="number" id="diameterInput" value="150" class="w-full p-2 border rounded" min="50" max="200">
+                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Diàmetre ($D_0$) [mm]</label>
+                            <input type="number" id="diameterInput" value="150" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white" min="50" max="200">
                         </div>
                     </div>
-                    <div class="text-xs text-gray-500 mt-1">
+                    <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         * Probeta Cilíndrica Estandar ($15x30$ cm per defecte)
                     </div>
                 </div>
@@ -147,8 +168,8 @@
             </div>
 
             <!-- Visualización de la Prensa -->
-            <div class="bg-white p-4 rounded-lg shadow border border-stone-200 flex-grow flex flex-col items-center justify-center min-h-[400px] relative">
-                <h3 class="absolute top-4 left-4 text-xs font-bold text-gray-400 uppercase">Premsa d'Assaos</h3>
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-stone-200 dark:border-slate-700 flex-grow flex flex-col items-center justify-center min-h-[400px] relative">
+                <h3 class="absolute top-4 left-4 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase">Premsa d'Assaos</h3>
                 
                 <!-- Estructura Prensa -->
                 <div class="relative w-48 flex flex-col items-center mt-8">
@@ -172,7 +193,7 @@
                     <div class="w-32 h-16 bg-stone-700 mt-[-5px] rounded-b-lg z-0 absolute top-full"></div>
                 </div>
 
-                <div class="absolute bottom-4 right-4 text-center bg-black p-3 rounded border-2 border-gray-500 font-mono shadow-inner w-32">
+                <div class="absolute bottom-4 right-4 text-center bg-black dark:bg-slate-900 p-3 rounded border-2 border-gray-500 dark:border-slate-700 font-mono shadow-inner w-32">
                     <div class="text-xs text-red-500 text-right mb-1">LOAD CELL</div>
                     <div class="text-xl font-bold text-green-500" id="forceDisplay">0.00 kN</div>
                 </div>
@@ -180,13 +201,13 @@
         </div>
 
         <!-- Panel Derecho: Gráfica y Datos -->
-        <div class="w-full lg:w-2/3 flex flex-col gap-4">
+        <div class="w-full lg:w-8/12 flex flex-col gap-4">
             
             <!-- Gráfica -->
-            <div class="bg-white p-4 rounded-lg shadow border border-stone-200 h-96 flex flex-col">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-stone-200 dark:border-slate-700 h-96 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 class="text-lg font-bold text-orange-700">2. Gràfica Tensió - Deformació</h2>
-                    <div class="text-xs text-gray-500">
+                    <h2 class="text-lg font-bold text-orange-700 dark:text-orange-300">2. Gràfica Tensió - Deformació</h2>
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
                         Eje Y: Tensió (MPa) | Eje X: Acurtament (%)
                     </div>
                 </div>
@@ -196,11 +217,11 @@
             </div>
 
             <!-- Datos y Exportación -->
-            <div class="bg-white p-4 rounded-lg shadow border border-stone-200 flex-grow">
+            <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-stone-200 dark:border-slate-700 flex-grow">
                 <div class="flex justify-between items-end mb-4">
                     <div>
-                        <h2 class="text-lg font-bold text-orange-700">3. Registre de Dades</h2>
-                        <p class="text-sm text-slate-500">Valors negatius indiquen compresió (acurtament).</p>
+                        <h2 class="text-lg font-bold text-orange-700 dark:text-orange-300">3. Registre de Dades</h2>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Valors negatius indiquen compresió (acurtament).</p>
                     </div>
                     <button id="btnExport" disabled class="bg-stone-600 hover:bg-stone-700 disabled:bg-gray-300 text-white px-4 py-2 rounded flex items-center gap-2 transition">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -211,8 +232,8 @@
                 </div>
 
                 <div class="overflow-x-auto max-h-60">
-                    <table class="w-full text-sm text-left text-gray-500">
-                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
+                    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                        <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-100 dark:bg-slate-700 sticky top-0">
                             <tr>
                                 <th class="px-4 py-2">Força (kN)</th>
                                 <th class="px-4 py-2">Acurtament (mm)</th>
@@ -220,8 +241,8 @@
                                 <th class="px-4 py-2">Deformació (%)</th>
                             </tr>
                         </thead>
-                        <tbody id="dataTableBody">
-                            <tr><td colspan="4" class="text-center py-4">Sistema preparat. Posa probeta.</td></tr>
+                        <tbody id="dataTableBody" class="dark:bg-slate-800">
+                            <tr><td colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">Sistema preparat. Posa probeta.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -275,6 +296,11 @@
             
             window.addEventListener('resize', () => {
                 resizeCanvas();
+                if(state.data.length > 0) drawChart();
+                else drawGrid();
+            });
+
+            window.addEventListener('themeChanged', () => {
                 if(state.data.length > 0) drawChart();
                 else drawGrid();
             });
@@ -362,21 +388,27 @@
             let stress = 0;
 
             // --- MODELO MATEMÁTICO ---
+            // Modelo Tensión-Deformación para Hormigón (basado en Eurocódigo 2)
             if (mat.type === 'brittle') {
-                const e0 = 0.002;
-                if (state.strain <= mat.maxStrain) {
-                    const ratio = state.strain / e0;
-                    if (state.strain <= e0) {
-                        stress = mat.fck * (2 * ratio - Math.pow(ratio, 2));
-                    } else {
-                        stress = mat.fck * (1 - (state.strain - e0) * 100); 
-                        if (stress < 0) stress = 0;
-                    }
+                const ec1 = 0.002; // Deformación en la tensión máxima para hormigones < 50 MPa
+                const ecu1 = mat.maxStrain; // Deformación última
+
+                if (state.strain <= ec1) {
+                    // Rama ascendente parabólica
+                    const ratio = state.strain / ec1;
+                    stress = mat.fck * (1 - Math.pow(1 - ratio, 2));
+                } else if (state.strain <= ecu1) {
+                    // Rama descendente (ablandamiento / softening)
+                    // Para la simulación, hacemos una caída lineal desde fck hasta 0 en ecu1.
+                    const ratio = (state.strain - ec1) / (ecu1 - ec1);
+                    stress = mat.fck * (1 - ratio);
                 } else {
+                    // Fallo completo
                     endTest();
                     return;
                 }
             } else {
+                // Modelo simplificado para metales (comportamiento dúctil)
                 const elasticLimit = mat.fck / mat.E;
                 if (state.strain < elasticLimit) {
                     stress = mat.E * state.strain;
@@ -490,16 +522,21 @@
             const h = els.canvas.height;
             const p = 30;
 
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? '#374151' : '#e5e7eb';
+            const textColor = isDark ? '#d1d5db' : '#000';
+            const bgColor = isDark ? '#1f2937' : '#fff';
+
             ctx.clearRect(0,0,w,h);
-            ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
+            ctx.fillStyle = bgColor; ctx.fillRect(0,0,w,h);
             
-            ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
+            ctx.strokeStyle = gridColor; ctx.lineWidth = 1;
             ctx.beginPath();
             for(let x=p; x<w; x+=40) { ctx.moveTo(x,0); ctx.lineTo(x,h-p); }
             for(let y=h-p; y>0; y-=40) { ctx.moveTo(p,y); ctx.lineTo(w,y); }
             ctx.stroke();
 
-            ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+            ctx.strokeStyle = textColor; ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(p,0); ctx.lineTo(p,h-p); ctx.lineTo(w,h-p);
             ctx.stroke();
@@ -516,12 +553,16 @@
 
             drawGrid();
 
+            const isDark = document.documentElement.classList.contains('dark');
+            const textColor = isDark ? '#d1d5db' : '#000';
+
             const getX = (val) => p + (val / maxE) * (w - p);
             const getY = (val) => (h - p) - (val / maxS) * (h - p);
 
             ctx.beginPath();
             ctx.strokeStyle = '#d97706'; 
             ctx.lineWidth = 3;
+            ctx.fillStyle = textColor;
             ctx.moveTo(getX(0), getY(0));
 
             for (let d of state.data) {
@@ -529,12 +570,18 @@
             }
             ctx.stroke();
             
-            ctx.fillStyle = '#000';
+            ctx.fillStyle = textColor;
             ctx.textAlign = 'right'; ctx.fillText(`${maxS.toFixed(0)} MPa`, p-5, 10);
             ctx.textAlign = 'center'; ctx.fillText(`${maxE.toFixed(2)} %`, w-20, h-p+15);
         }
 
         init();
+    </script>
+    <script>
+        // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
+        document.addEventListener('DOMContentLoaded', () => {
+            setupThemeToggler(document.getElementById('theme-toggle'));
+        });
     </script>
 </body>
 </html>
