@@ -102,11 +102,11 @@
     <header class="bg-stone-800 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-orange-500 dark:border-orange-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 data-translate="compression_title" class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Compressió</h1>
-                <p data-translate="compression_subtitle" class="text-sm opacity-80 dark:text-slate-300">Assajos de Materials</p>
+                <h1 data-translate="compression_title" class="text-xl sm:text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Compressió</h1>
+                <p data-translate="compression_subtitle" class="text-xs sm:text-sm opacity-80 dark:text-slate-300">Assajos de Materials</p>
             </div>
-            <div class="flex items-center gap-2">
-                <a data-translate="return_to_menu" href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+            <div class="flex items-center gap-1 sm:gap-2">
+                <a data-translate="return_to_menu" href="index.html" class="text-xs sm:text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
                 <!-- Botó de Tema -->
                 <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-stone-700 dark:hover:bg-slate-700 focus:outline-none">
                     <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
@@ -143,24 +143,38 @@
                         <label data-translate="material" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
                         <select id="materialSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white">
                             <optgroup data-translate="concrete_fragile" label="Materials de Construcció (Fràgils)">
-                                <option data-translate="concrete25" value="concrete25">Formigó HA-25 (Convencional)</option>
-                                <option data-translate="concrete50" value="concrete50">Formigó HA-50 (Alta Resistència)</option>
-                                <option data-translate="mortar" value="mortar">Morter de Ciment (M-15)</option>
+                                <option data-translate="concrete25" value="concrete25">Formigó HA-25</option>
+                                <option data-translate="concrete50" value="concrete50">Formigó HA-50</option>
+                                <option data-translate="mortar" value="mortar">Morter de Ciment</option>
                             </optgroup>
                             <optgroup data-translate="metals_ductile" label="Metalls (Dúctils)">
                                 <option data-translate="aluminum" value="aluminum">Aliatge d'Alumini</option>
                                 <option data-translate="copper" value="copper">Coure</option>
                             </optgroup>
+                            <optgroup data-translate="woods" label="Fustes">
+                                <option data-translate="pine_wood" value="pine_wood">Fusta de Pi</option>
+                            </optgroup>
+                            <optgroup data-translate="polymers" label="Polímers">
+                                <option data-translate="pvc" value="pvc">PVC Rígid</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div>
+                        <label data-translate="machine_limit" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Límit de Força de la Màquina</label>
+                        <select id="machineLimitSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white">
+                            <option value="50000">50 kN (Premsa Petita)</option>
+                            <option value="500000">500 kN (Estàndard Formigó)</option>
+                            <option value="2000000" selected>2000 kN (Alta Capacitat)</option>
                         </select>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label data-translate="height" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Altura ($H_0$) [mm]</label>
-                            <input type="number" id="heightInput" value="300" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white" min="100" max="300">
+                            <input type="number" id="heightInput" value="300" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white" min="20" max="300">
                         </div>
                         <div>
                             <label data-translate="diameter" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Diàmetre ($D_0$) [mm]</label>
-                            <input type="number" id="diameterInput" value="150" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white" min="50" max="200">
+                            <input type="number" id="diameterInput" value="150" class="w-full p-2 border dark:border-slate-600 rounded bg-stone-50 dark:bg-slate-700 dark:text-white" min="10" max="200">
                         </div>
                     </div>
                     <div data-translate="std_specimen_comp" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -263,8 +277,10 @@
             concrete25: { name: 'Hormigón HA-25', E: 28000, fck: 25, maxStrain: 0.0035, type: 'brittle', color: '#9ca3af', texture: 'grain' },
             concrete50: { name: 'Hormigón HA-50', E: 37000, fck: 50, maxStrain: 0.003, type: 'brittle', color: '#6b7280', texture: 'grain' },
             mortar:     { name: 'Mortero M-15', E: 15000, fck: 15, maxStrain: 0.004, type: 'brittle', color: '#d6d3d1', texture: 'grain' },
-            aluminum:   { name: 'Aluminio', E: 70000, fck: 200, maxStrain: 0.20, type: 'ductile', color: '#cbd5e1', texture: 'smooth' }, 
-            copper:     { name: 'Cobre', E: 110000, fck: 100, maxStrain: 0.30, type: 'ductile', color: '#b45309', texture: 'smooth' }
+            aluminum:   { name: 'Aluminio', E: 70000, fck: 150, maxStrain: 0.20, type: 'ductile', color: '#cbd5e1', texture: 'smooth' }, 
+            copper:     { name: 'Cobre', E: 110000, fck: 80, maxStrain: 0.30, type: 'ductile', color: '#b45309', texture: 'smooth' },
+            pine_wood:  { name: 'Madera de Pino', E: 11000, fck: 40, maxStrain: 0.005, type: 'brittle', color: '#fde68a', texture: 'grain' },
+            pvc:        { name: 'PVC Rígido', E: 3000, fck: 50, maxStrain: 0.1, type: 'ductile', color: '#e2e8f0', texture: 'smooth' }
         };
 
         let state = {
@@ -274,7 +290,8 @@
             data: [],
             timer: null,
             currentMaterial: null,
-            specimen: { H0: 300, D0: 150, Area0: 0, visualHeightPx: 0 }
+            specimen: { H0: 300, D0: 150, Area0: 0, visualHeightPx: 0 },
+            machineLimit: 2000000 // Força màxima de la màquina en Newtons
         };
 
         const els = {
@@ -282,6 +299,7 @@
             H0: document.getElementById('heightInput'),
             D0: document.getElementById('diameterInput'),
             btnStart: document.getElementById('btnStart'),
+            machineLimit: document.getElementById('machineLimitSelect'),
             btnReset: document.getElementById('btnReset'),
             btnExport: document.getElementById('btnExport'),
             specimen: document.getElementById('specimen'),
@@ -300,6 +318,7 @@
             els.material.addEventListener('change', updateVisuals);
             els.H0.addEventListener('input', () => { updateGeometry(); updateVisuals(); });
             els.D0.addEventListener('input', () => { updateGeometry(); updateVisuals(); });
+            els.machineLimit.addEventListener('change', () => { state.machineLimit = parseFloat(els.machineLimit.value); });
             
             window.addEventListener('resize', () => {
                 resizeCanvas();
@@ -313,6 +332,7 @@
             });
             
             updateVisuals();
+            state.machineLimit = parseFloat(els.machineLimit.value);
             drawGrid();
 
             // Afegim l'event listener per al botó d'exportar
@@ -373,6 +393,7 @@
             els.material.disabled = true;
             els.H0.disabled = true;
             els.D0.disabled = true;
+            els.machineLimit.disabled = true;
             els.btnStart.disabled = true;
             els.btnReset.disabled = false;
 
@@ -434,6 +455,12 @@
             const force = finalStress * state.specimen.Area0; 
             const reportedStress = force / state.specimen.Area0; 
             const shortening = state.strain * state.specimen.H0;
+
+            // Comprovació del límit de la màquina
+            if (force >= state.machineLimit) {
+                exceedLimit(force);
+                return;
+            }
 
             state.data.push({
                 f: force,
@@ -502,6 +529,16 @@
             drawChart();
         }
 
+        function exceedLimit(force) {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+
+            els.forceDisplay.innerHTML = `<span class="text-yellow-500">LÍMIT SUPERAT!</span><div class="text-sm">${(force/1000).toFixed(1)} kN > ${(state.machineLimit/1000).toFixed(0)} kN</div>`;
+            
+            // Dibuixar la gràfica fins al punt de fallada
+            drawChart();
+        }
+
         function resetTest() {
             state.running = false;
             state.data = [];
@@ -510,6 +547,7 @@
             els.material.disabled = false;
             els.H0.disabled = false;
             els.D0.disabled = false;
+            els.machineLimit.disabled = false;
             els.btnStart.disabled = false;
             els.btnReset.disabled = true;
             els.btnExport.disabled = true;

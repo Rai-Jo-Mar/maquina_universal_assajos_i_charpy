@@ -100,22 +100,29 @@
     <header class="bg-green-900 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-green-500 dark:border-green-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold dark:text-slate-100">Laboratorio Virtual: Resiliencia</h1>
-                <p class="text-sm opacity-80 dark:text-slate-300">Ensayo de Impacto Charpy (ISO 148-1)</p>
+                <h1 data-translate="resilience_title" class="text-xl sm:text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Resiliència</h1>
+                <p data-translate="resilience_subtitle" class="text-xs sm:text-sm opacity-80 dark:text-slate-300">Assaig d'Impacte Charpy (ISO 148-1)</p>
             </div>
-            <div class="flex items-center gap-4">
-                <a href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+            <div class="flex items-center gap-1 sm:gap-2">
+                <a data-translate="return_to_menu" href="index.html" class="text-xs sm:text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
                 <!-- Botó de Tema -->
                 <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-green-800 dark:hover:bg-slate-700 focus:outline-none">
-                    <!-- Icona Sol (per a tema fosc) -->
-                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    <!-- Icona Lluna (per a tema clar) -->
-                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>
+                    <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                    <svg class="moon-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
                 </button>
+                <!-- Menú Idioma -->
+                <div class="relative">
+                    <button id="lang-toggle" class="p-2 rounded-full text-slate-300 hover:bg-green-800 dark:hover:bg-slate-700 focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m4 13-4-4-4 4M19 17v-2a4 4 0 00-4-4H9M19 17h-4" /></svg>
+                    </button>
+                    <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 bg-white dark:bg-slate-800 rounded-md shadow-lg py-1 z-20 border dark:border-slate-700">
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('ca'); return false;">Català / Valencià</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('es'); return false;">Español</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('eu'); return false;">Euskara</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('gl'); return false;">Galego</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700" onclick="setLanguage('en'); return false;">English</a>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
@@ -128,43 +135,82 @@
             <!-- Configuración -->
             <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-green-200 dark:border-slate-700 overflow-hidden">
                 <div class="panel-header p-3 font-bold flex justify-between items-center">
-                    <span>1. Preparación de Muestra</span>
+                    <span data-translate="sample_prep">1. Preparació de la Mostra</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
                     </svg>
                 </div>
                 <div class="p-4 space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Material</label>
+                    <div class="border-b pb-4 space-y-4">
+                        <label data-translate="material" class="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">Material</label>
                         <select id="materialSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-green-50 dark:bg-slate-700 focus:ring-2 focus:ring-green-500 outline-none dark:text-white">
-                            <option value="steel_lowC">Acero Bajo Carbono (S235)</option>
-                            <option value="steel_highC">Acero Alto Carbono (Templado)</option>
-                            <option value="aluminum">Aleación Aluminio (7075)</option>
-                            <option value="titanium">Titanio (Ti-6Al-4V)</option>
+                            <option data-translate="low_carbon_steel" value="steel_lowC">Acer Baix Carboni (S235)</option>
+                            <option data-translate="high_carbon_steel" value="steel_highC">Acer Alt Carboni (Trempat)</option>
+                            <option data-translate="aluminum_alloy_7075" value="aluminum">Aliatge Alumini (7075)</option>
+                            <option data-translate="titanium_alloy_ti64" value="titanium">Titani (Ti-6Al-4V)</option>
                         </select>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="matDesc">Presenta transición dúctil-frágil clara.</p>
-                    </div>
-
-                    <div>
+                        <p data-translate="bcc_desc_initial" class="text-xs text-gray-500 dark:text-gray-400 mt-1" id="matDesc">Presenta transició dúctil-fràgil clara.</p>
                         <div class="flex justify-between mb-1 dark:text-slate-300">
-                            <label class="block text-sm font-medium text-slate-600 dark:text-slate-300">Temperatura de Ensayo</label>
+                            <label data-translate="test_temp" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Temperatura d'Assaig</label>
                             <span id="tempDisplay" class="font-bold text-blue-600 dark:text-blue-400">20 °C</span>
                         </div>
                         <input type="range" id="tempInput" min="-100" max="100" value="20" step="10"
                                class="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer hot">
                         <div class="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-1">
-                            <span>-100°C (N₂)</span>
+                            <span data-translate="temp_n2">-100°C (N₂)</span>
                             <span>0°C</span>
-                            <span>+100°C</span>
+                            <span data-translate="temp_100">+100°C</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-2">
+                        <p class="text-sm font-medium text-slate-600 dark:text-slate-300 mb-2" data-translate="pendulum_params">Paràmetres del Pèndol</p>
+                        <div class="flex items-center gap-4">
+                            <div class="w-2/3 space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <label data-translate="pendulum_mass" class="font-medium">Massa del Pèndol</label>
+                                        <span id="massDisplay" class="font-bold text-green-700 dark:text-green-400">20 kg</span>
+                                    </div>
+                                    <input type="range" id="massInput" min="10" max="50" value="20" step="5" class="w-full">
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-xs mb-1">
+                                        <label data-translate="arm_length" class="font-medium">Longitud del Braç</label>
+                                        <span id="lengthDisplay" class="font-bold text-green-700 dark:text-green-400">1.0 m</span>
+                                    </div>
+                                    <input type="range" id="lengthInput" min="0.5" max="1.5" value="1.0" step="0.1" class="w-full">
+                                </div>
+                            </div>
+                            <div class="w-1/3">
+                                <!-- Simple SVG Diagram -->
+                                <svg viewBox="0 0 100 100" class="w-full h-auto border rounded bg-slate-50 dark:bg-slate-800 dark:border-slate-700">
+                                    <line x1="50" y1="10" x2="50" y2="70" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="50" cy="80" r="10" fill="currentColor" />
+                                    <text x="60" y="45" font-size="10" fill="currentColor">L</text>
+                                    <text x="60" y="85" font-size="10" fill="currentColor">m</text>
+                                    <circle cx="50" cy="10" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="mt-2 text-xs text-center bg-green-50 dark:bg-green-900/20 p-2 rounded border dark:border-green-800/20">
+                            <span data-translate="initial_energy">Energia Potencial Inicial:</span>
+                            <span id="initialEnergyDisplay" class="font-bold text-green-800 dark:text-green-300">290.1 J</span>
+                            <br>
+                            <span data-translate="initial_height">Alçada Inicial:</span>
+                            <span id="initialHeightDisplay" class="font-bold text-green-800 dark:text-green-300">0.0 m</span>
+                            <br>
+                            <span data-translate="final_height">Alçada Final:</span>
+                            <span id="finalHeightDisplay" class="font-bold text-green-800 dark:text-green-300">0.0 m</span>
                         </div>
                     </div>
                     
                     <div class="flex gap-2 pt-2">
                         <button id="btnStrike" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded font-bold transition shadow-md flex justify-center items-center gap-2" onclick="startTest()">
-                            <span class="text-xl">🔨</span> Soltar Pèndol
+                            <span class="text-xl">🔨</span> <span data-translate="release_pendulum">Soltar Pèndol</span>
                         </button>
                         <button id="btnReset" class="w-1/3 bg-slate-500 hover:bg-slate-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>
-                            Nueva Probeta
+                            <span data-translate="new_specimen_charpy">Nova Probeta</span>
                         </button>
                     </div>
                 </div>
@@ -172,7 +218,7 @@
 
             <!-- Visor Péndulo -->
             <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-green-200 dark:border-slate-700 overflow-hidden flex flex-col relative min-h-[300px]">
-                <div class="absolute top-2 left-2 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase z-10">Cámara de Impacto</div>
+                <div data-translate="impact_chamber" class="absolute top-2 left-2 text-xs font-bold text-gray-400 dark:text-gray-500 uppercase z-10">Cambra d'Impacte</div>
                 
                 <!-- Canvas Animación -->
                 <div class="w-full h-full machine-bg flex items-center justify-center p-0 relative">
@@ -180,7 +226,7 @@
                     
                     <!-- Energía Digital -->
                     <div class="absolute top-4 right-4 bg-black/80 text-yellow-400 font-mono p-2 rounded text-sm border border-yellow-600 shadow-lg text-right w-32">
-                        <div class="text-xs text-gray-400">ENERGÍA (KV)</div>
+                        <div data-translate="energy_kv" class="text-xs text-gray-400">ENERGIA (KV)</div>
                         <div id="energyDisplay" class="text-2xl font-bold">0 J</div>
                     </div>
                 </div>
@@ -194,12 +240,8 @@
             <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-green-200 dark:border-slate-700 p-4 h-80 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
                     <div class="dark:text-slate-200">
-                        <h2 class="text-lg font-bold text-green-800 dark:text-green-300">2. Curva de Transición Dúctil-Frágil</h2>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">Realice ensayos a distintas temperaturas para construir la curva.</p>
-                    </div>
-                    <div class="flex gap-2 text-xs">
-                        <span class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded border dark:border-slate-600 flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-blue-500"></div> Acero</span>
-                        <span class="px-2 py-1 bg-gray-100 dark:bg-slate-700 rounded border dark:border-slate-600 flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-orange-500"></div> Aluminio</span>
+                        <h2 data-translate="transition_curve_title" class="text-lg font-bold text-green-800 dark:text-green-300">2. Curva de Transició Dúctil-Fràgil</h2>
+                        <p data-translate="transition_curve_desc" class="text-xs text-gray-500 dark:text-gray-400">Realitzeu assajos a diferents temperatures per construir la curva.</p>
                     </div>
                 </div>
                 <div class="relative flex-grow w-full h-full">
@@ -211,28 +253,28 @@
             <div class="bg-white dark:bg-slate-800 rounded-lg shadow border border-green-200 dark:border-slate-700 flex-grow p-4">
                 <div class="flex justify-between items-end mb-3">
                     <div>
-                        <h2 class="text-lg font-bold text-green-800 dark:text-green-300">3. Registro de Impactos</h2>
-                        <p class="text-xs text-slate-500 dark:text-slate-400">Resiliencia $\rho = KCV / S_0$ (J/cm²)</p>
+                        <h2 data-translate="impact_log" class="text-lg font-bold text-green-800 dark:text-green-300">3. Registre d'Impactes</h2>
+                        <p data-translate="resilience_formula" class="text-xs text-slate-500 dark:text-slate-400">Resiliència $\rho = KCV / S_0$ (J/cm²)</p>
                     </div>
                     <div class="flex items-center gap-4" id="export-buttons-container">
                         <button id="btnExport" disabled class="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white px-3 py-2 rounded text-sm flex items-center gap-2 transition">
-                            Descarregar CSV
+                            <span data-translate="download_csv">Descarregar CSV</span>
                         </button>
-                        <button id="btnClean" onclick="clearData()" class="text-red-600 hover:text-red-800 dark:text-red-400 text-xs font-bold underline">Borrar Dades</button>
+                        <button data-translate="clear_data" id="btnClean" onclick="clearData()" class="text-red-600 hover:text-red-800 dark:text-red-400 text-xs font-bold underline">Esborrar Dades</button>
                     </div>
                 </div>
                 <div class="overflow-y-auto h-48 border rounded">
                     <table class="w-full text-sm text-left text-gray-600 dark:text-gray-400">
                         <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-100 dark:bg-slate-700 sticky top-0">
                             <tr>
-                                <th class="px-4 py-2">Material</th>
-                                <th class="px-4 py-2">Temp (°C)</th>
-                                <th class="px-4 py-2">Energía (J)</th>
-                                <th class="px-4 py-2">Rotura</th>
+                                <th data-translate="material_col" class="px-4 py-2">Material</th>
+                                <th data-translate="temp_col" class="px-4 py-2">Temp (°C)</th>
+                                <th data-translate="energy_col" class="px-4 py-2">Energia (J)</th>
+                                <th data-translate="fracture_type_col" class="px-4 py-2">Trencament</th>
                             </tr>
                         </thead>
                         <tbody id="dataTableBody" class="dark:bg-slate-800">
-                            <tr><td colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">Añada puntos ensayando a diferentes temperaturas.</td></tr>
+                            <tr><td data-translate="add_points_temp" colspan="4" class="text-center py-4 text-gray-400 dark:text-gray-500">Afegiu punts assajant a diferents temperatures.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -247,25 +289,25 @@
         const materials = {
             steel_lowC: { 
                 name: 'Acero S235', 
-                desc: 'Transición Dúctil-Frágil muy marcada.',
+                desc_key: 'bcc_desc_initial',
                 Emax: 180, Emin: 10, Tt: 0, width: 15, color: '#3b82f6',
                 type: 'bcc' // Estructura cristalina BCC (sensible a temp)
             },
             steel_highC: { 
                 name: 'Acero Templado', 
-                desc: 'Más frágil, menor energía máxima.',
+                desc_key: 'tempered_steel_desc',
                 Emax: 60, Emin: 5, Tt: 20, width: 20, color: '#64748b',
                 type: 'bcc'
             },
             aluminum: { 
-                name: 'Aluminio 7075', 
-                desc: 'Red FCC: No presenta transición drástica.',
+                name: 'Aluminio 7075',
+                desc_key: 'fcc_desc',
                 Emax: 80, Emin: 70, Tt: -200, width: 50, color: '#f97316',
                 type: 'fcc' // Insensible a temp (casi plana)
             },
             titanium: { 
-                name: 'Titanio', 
-                desc: 'Alta tenacidad, curva suave.',
+                name: 'Titanio',
+                desc_key: 'hcp_desc',
                 Emax: 120, Emin: 80, Tt: -50, width: 30, color: '#8b5cf6',
                 type: 'hcp'
             }
@@ -273,21 +315,20 @@
 
         let state = {
             swinging: false,
-            angle: -Math.PI / 1.2, // Ángulo inicial (levantado a la izquierda)
+            angle: -2.618, // Angle inicial en radians (-150 graus), equivalent a -Math.PI / 1.2
             velocity: 0,
             targetAngle: 0, // A dónde debe llegar tras romper
             phase: 'ready', // ready, down, impact, up, oscillate
             data: [],
             currentMat: null,
             currentTemp: 20,
-            energyAbsorbed: 0
-        };
-
-        // Configuración Péndulo
-        const PENDULUM = {
-            L: 200, // Longitud brazo (px)
-            cx: 0, cy: 50, // Pivote (se calcula en resize)
-            mass: 20 // kg ficticios para inercia visual
+            energyAbsorbed: 0,
+            pendulum: {
+                mass: 20, // kg
+                length: 1.0, // m
+                cx: 0, cy: 50, // Pivote (px)
+                L_px: 200 // Longitud visual (px)
+            }
         };
 
         // DOM
@@ -297,6 +338,11 @@
             temp: document.getElementById('tempInput'),
             tempDisp: document.getElementById('tempDisplay'),
             btnStrike: document.getElementById('btnStrike'),
+            massInput: document.getElementById('massInput'),
+            massDisplay: document.getElementById('massDisplay'),
+            lengthInput: document.getElementById('lengthInput'),
+            lengthDisplay: document.getElementById('lengthDisplay'),
+            initialEnergyDisplay: document.getElementById('initialEnergyDisplay'),
             btnReset: document.getElementById('btnReset'),
             energyDisp: document.getElementById('energyDisplay'),
             simCvs: document.getElementById('simCanvas'),
@@ -313,10 +359,9 @@
             drawSimulationStatic();
             drawChartGrid();
 
-            els.mat.addEventListener('change', () => {
-                const m = materials[els.mat.value];
-                els.matDesc.textContent = m.desc;
-            });
+            els.mat.addEventListener('change', updateParameters);
+            els.massInput.addEventListener('input', updateParameters);
+            els.lengthInput.addEventListener('input', updateParameters);
 
             els.temp.addEventListener('input', (e) => {
                 const val = parseInt(e.target.value);
@@ -342,6 +387,8 @@
                 if(state.data.length > 0) drawChart();
                 else drawChartGrid();
             });
+
+            updateParameters(); // Call once at start
         }
         
         // Afegim l'event listener per al botó d'exportar de forma segura
@@ -365,8 +412,25 @@
             els.chartCvs.height = els.chartCvs.offsetHeight;
             
             // Centro péndulo
-            PENDULUM.cx = els.simCvs.width / 2;
-            PENDULUM.cy = 40;
+            state.pendulum.cx = els.simCvs.width / 2;
+            state.pendulum.cy = 40;
+        }
+
+        function updateParameters() {
+            const m = materials[els.mat.value];
+            els.matDesc.setAttribute('data-translate', m.desc_key);
+            applyTranslations(); // Re-apply for the description
+
+            state.pendulum.mass = parseFloat(els.massInput.value);
+            state.pendulum.length = parseFloat(els.lengthInput.value);
+            els.massDisplay.textContent = `${state.pendulum.mass} kg`;
+            els.lengthDisplay.textContent = `${state.pendulum.length.toFixed(1)} m`;
+
+            // Calcular y mostrar energía potencial inicial
+            const initial_h = state.pendulum.length * (1 - Math.cos(-2.618)); // Angle inicial fix
+            const initialEnergy = state.pendulum.mass * 9.81 * initial_h;
+            els.initialEnergyDisplay.textContent = `${initialEnergy.toFixed(1)} J`;
+            els.initialHeightDisplay.textContent = `${initial_h.toFixed(3)} m`;
         }
 
         // --- Lógica de Energía y Cálculo ---
@@ -385,6 +449,8 @@
             // Lock UI
             els.mat.disabled = true;
             els.temp.disabled = true;
+            els.massInput.disabled = true;
+            els.lengthInput.disabled = true;
             els.btnStrike.disabled = true;
             els.btnReset.disabled = true; 
 
@@ -393,14 +459,19 @@
             state.energyAbsorbed = calculateEnergy(els.mat.value, state.currentTemp);
             
             // Calcular ángulo final objetivo
-            const maxSystemEnergy = 300; 
-            const energyRatio = state.energyAbsorbed / maxSystemEnergy;
+            const h_initial_swing = state.pendulum.length * (1 - Math.cos(state.angle)); // L'angle inicial actual del swing
+            const maxSystemEnergy = state.pendulum.mass * 9.81 * h_initial_swing;
+
+            // Si la energía absorbida es mayor que la inicial, el péndulo se detiene
+            const finalEnergy = Math.max(0, maxSystemEnergy - state.energyAbsorbed);
+            const h_final = finalEnergy / (state.pendulum.mass * 9.81);
+            els.finalHeightDisplay.textContent = `${h_final.toFixed(3)} m`;
             
-            const startH = 1 - Math.cos(state.angle); 
-            const finalH = Math.max(0, startH - (energyRatio * 2.5)); 
+            // Càlcul de l'angle final a partir de l'alçada final
+            const cos_target_angle = Math.min(1, 1 - (h_final / state.pendulum.length)); // Assegurem que no sigui > 1
             
-            let target = Math.acos(1 - finalH);
-            if (isNaN(target)) target = 0;
+            let target = Math.acos(cos_target_angle);
+            if (isNaN(target)) target = Math.PI / 2; // Si l'energia és 0, queda a 90 graus
             state.targetAngle = target;
 
             state.swinging = true;
@@ -413,20 +484,21 @@
         function animatePendulum() {
             if (!state.swinging) return;
 
-            // CORRECCIÓN FÍSICA: Usar aceleración correcta basada en -sin(theta)
-            const g = 0.6; 
+            const G_PHYSICS = 9.81; // Real gravity
+            const DT_ANIMATION = 0.05; // Time step for animation speed (adjust as needed)
 
             if (state.phase === 'down') {
-                // Gravedad acelera el péndulo hacia el ángulo 0
-                // Como el ángulo es negativo, -sin(angle) es positivo
-                const acceleration = -1 * g * Math.sin(state.angle);
-                state.velocity += acceleration;
-                state.angle += state.velocity * 0.05;
+                const angular_acceleration = -(G_PHYSICS / state.pendulum.length) * Math.sin(state.angle);
+                state.velocity += angular_acceleration * DT_ANIMATION;
+                state.angle += state.velocity * DT_ANIMATION;
 
-                if (state.angle >= 0) {
+                // console.log(`Angle: ${state.angle.toFixed(3)}, Velocity: ${state.velocity.toFixed(3)}, Accel: ${angular_acceleration.toFixed(3)}`);
+
+                if (state.angle >= 0) { // L'impacte és just a l'angle 0
                     // IMPACTO
                     state.phase = 'impact';
                     state.angle = 0;
+                    state.velocity = Math.abs(state.velocity); // Velocity is positive after impact
                 }
             } else if (state.phase === 'impact') {
                 state.phase = 'up';
@@ -487,12 +559,14 @@
 
         function resetTest() {
             state.swinging = false;
-            state.angle = -Math.PI / 1.2;
+            state.angle = -2.618; // Restablim l'angle inicial
             state.phase = 'ready';
             state.velocity = 0;
             
             els.mat.disabled = false;
             els.temp.disabled = false;
+            els.massInput.disabled = false;
+            els.lengthInput.disabled = false;
             els.btnStrike.disabled = false;
             els.btnReset.disabled = true;
             
@@ -516,8 +590,8 @@
             const ctx = els.simCvs.getContext('2d');
             const w = els.simCvs.width;
             const h = els.simCvs.height;
-            const cx = PENDULUM.cx;
-            const cy = PENDULUM.cy;
+            const cx = state.pendulum.cx;
+            const cy = state.pendulum.cy;
 
             ctx.clearRect(0, 0, w, h);
 
@@ -545,8 +619,8 @@
             }
 
             // 3. Péndulo (Brazo)
-            const endX = cx + Math.sin(angle) * PENDULUM.L;
-            const endY = cy + Math.cos(angle) * PENDULUM.L;
+            const endX = cx + Math.sin(angle) * state.pendulum.L_px;
+            const endY = cy + Math.cos(angle) * state.pendulum.L_px;
 
             ctx.beginPath();
             ctx.moveTo(cx, cy);
@@ -578,7 +652,7 @@
             ctx.save();
             ctx.translate(cx, cy);
             ctx.beginPath();
-            ctx.arc(0,0, PENDULUM.L + 40, Math.PI/4, 3*Math.PI/4);
+            ctx.arc(0,0, state.pendulum.L_px + 40, -Math.PI / 1.2, Math.PI / 1.2);
             ctx.strokeStyle = 'rgba(0,0,0,0.1)';
             ctx.lineWidth = 1;
             ctx.stroke();
@@ -666,9 +740,23 @@
         init();
     </script>
     <script>
-        // Afegeix la funcionalitat al botó de tema un cop el DOM està carregat.
+        // Funcionalitat dels menús i traduccions
         document.addEventListener('DOMContentLoaded', () => {
+            // Botó de tema
             setupThemeToggler(document.getElementById('theme-toggle'));
+
+            // Menú d'idioma
+            const langToggle = document.getElementById('lang-toggle');
+            const langMenu = document.getElementById('lang-menu');
+            langToggle.addEventListener('click', () => langMenu.classList.toggle('hidden'));
+            window.addEventListener('click', (e) => {
+                if (!langToggle.contains(e.target) && !langMenu.contains(e.target)) {
+                    langMenu.classList.add('hidden');
+                }
+            });
+
+            // Aplicar traduccions a l'inici
+            applyTranslations();
         });
     </script>
 </body>

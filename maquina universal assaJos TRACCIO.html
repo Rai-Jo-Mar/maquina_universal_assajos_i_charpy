@@ -122,8 +122,17 @@
                 <h2 data-translate="specimen_config" class="text-lg font-bold mb-3 text-blue-800 dark:text-blue-300 border-b border-slate-200 dark:border-slate-700 pb-2">1. Configuració de la Probeta</h2>
                 
                 <div class="grid grid-cols-1 gap-3 mb-4">
-                    <div>
-                        <label data-translate="material" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
+                    <div class="relative">
+                        <div class="flex items-center gap-2">
+                            <label data-translate="material" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Material</label>
+                            <div class="relative group flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4a4.006 4.006 0 0 1 1.53-3.228" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-6" /></svg>
+                                <div data-translate="help_yield_point" class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-black text-white text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                    Límit Elàstic (Fluència): Punt on el material comença a deformar-se plàsticament (de manera permanent).
+                                    <svg class="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                                </div>
+                            </div>
+                        </div>
                         <select id="materialSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white">
                             <option data-translate="steel" value="steel">Acer Estructural (S275)</option>
                             <option data-translate="aluminum" value="aluminum">Aliatge d'Alumini (6061)</option>
@@ -131,14 +140,31 @@
                             <option data-translate="polymer" value="polymer">Polímer Rígid (PVC)</option>
                         </select>
                     </div>
+                    <div>
+                        <label data-translate="machine_limit" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Límit de Força de la Màquina</label>
+                        <select id="machineLimitSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white">
+                            <option value="500">500 N (Dinamòmetre Educatiu)</option>
+                            <option value="50000" selected>50 kN (Estàndard Laboratori)</option>
+                            <option value="250000">250 kN (Alta Capacitat)</option>
+                        </select>
+                    </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label data-translate="length" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Longitud ($L_0$) [mm]</label>
+                            <div class="flex items-center gap-2">
+                                <label data-translate="length" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Longitud ($L_0$) [mm]</label>
+                                <div class="relative group flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4a4.006 4.006 0 0 1 1.53-3.228" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-6" /></svg>
+                                    <div data-translate="help_plastic_zone" class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 bg-black text-white text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                        Zona Plàstica: El material sofreix una deformació permanent. Encara que es retiri la càrrega, no recuperarà la seva forma inicial.
+                                        <svg class="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                                    </div>
+                                </div>
+                            </div>
                             <input type="number" id="lengthInput" value="100" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white" min="50" max="200">
                         </div>
                         <div>
                             <label data-translate="diameter" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Diàmetre ($D_0$) [mm]</label>
-                            <input type="number" id="diameterInput" value="10" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white" min="5" max="20">
+                            <input type="number" id="diameterInput" value="10" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white" min="0.5" max="20" step="0.1">
                         </div>
                     </div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -186,7 +212,16 @@
             <!-- Gráfica -->
             <div class="bg-white dark:bg-slate-800 p-4 rounded-lg shadow border border-slate-200 dark:border-slate-700 h-96 flex flex-col">
                 <div class="flex justify-between items-center mb-2">
-                    <h2 data-translate="graph_title_traction" class="text-lg font-bold text-blue-800 dark:text-blue-300">2. Diagrama Força - Allargament</h2>
+                    <div class="flex items-center gap-2">
+                        <h2 data-translate="graph_title_traction" class="text-lg font-bold text-blue-800 dark:text-blue-300">2. Diagrama Força - Allargament</h2>
+                        <div class="relative group flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4a4.006 4.006 0 0 1 1.53-3.228" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-6" /></svg>
+                            <div data-translate="help_elastic_zone" class="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-72 bg-black text-white text-xs rounded-lg py-2 px-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                                Zona Elàstica: El material es deforma però torna a la seva forma original si es retira la càrrega. La pendent d'aquesta recta és el Mòdul de Young (E).
+                                <svg class="absolute text-black h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255" xml:space="preserve"><polygon class="fill-current" points="0,0 127.5,127.5 255,0"/></svg>
+                            </div>
+                        </div>
+                    </div>
                     <span data-translate="real_time_sim" class="text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded border border-yellow-200 dark:border-yellow-700">Simulació en temps real</span>
                 </div>
                 <div class="relative flex-grow w-full h-full">
@@ -248,7 +283,8 @@
             data: [], // Array para guardar los puntos
             timer: null,
             currentMaterial: null,
-            specimen: { L0: 100, D0: 10, S0: 0 }
+            specimen: { L0: 100, D0: 10, S0: 0 },
+            machineLimit: 50000 // Força màxima de la màquina en Newtons
         };
 
         // Elementos del DOM
@@ -257,6 +293,7 @@
             L0: document.getElementById('lengthInput'),
             D0: document.getElementById('diameterInput'),
             area: document.getElementById('areaDisplay'),
+            machineLimit: document.getElementById('machineLimitSelect'),
             btnStart: document.getElementById('btnStart'),
             btnReset: document.getElementById('btnReset'),
             btnExport: document.getElementById('btnExport'),
@@ -279,6 +316,7 @@
             els.material.addEventListener('change', updateVisuals);
             els.L0.addEventListener('input', () => { updateArea(); updateVisuals(); });
             els.D0.addEventListener('input', () => { updateArea(); updateVisuals(); });
+            els.machineLimit.addEventListener('change', () => { state.machineLimit = parseFloat(els.machineLimit.value); });
             
             window.addEventListener('resize', () => {
                 resizeCanvas();
@@ -292,6 +330,7 @@
             });
             
             updateVisuals();
+            state.machineLimit = parseFloat(els.machineLimit.value);
 
             // Afegim l'event listener per al botó d'exportar
             els.btnExport.addEventListener('click', () => {
@@ -320,9 +359,10 @@
             const mat = materials[matKey];
             // Ajustar color probeta
             els.specimen.style.backgroundColor = mat.color;
-            // Ajustar ancho visual relativo (solo visual)
-            const widthBase = 16; // px
-            const scale = state.specimen.D0 / 10;
+            // Ajustar ample visual relatiu (només visual)
+            // Amb una escala logarítmica suau per a que els diàmetres molt petits siguin visibles
+            const widthBase = 12; // px
+            const scale = Math.log10(state.specimen.D0 + 1) * 1.5;
             els.specimen.style.width = `${widthBase * scale}px`;
             els.specimen.style.height = '100px'; // Reset visual height
             els.specimen.classList.remove('broken');
@@ -341,6 +381,7 @@
             els.material.disabled = true;
             els.L0.disabled = true;
             els.D0.disabled = true;
+            els.machineLimit.disabled = true;
             els.btnStart.disabled = true;
             els.btnReset.disabled = false;
 
@@ -418,6 +459,12 @@
             const force = finalStress * state.specimen.S0; // Newtons
             const elongation = state.strain * state.specimen.L0; // mm
 
+            // Comprovació del límit de la màquina
+            if (force >= state.machineLimit) {
+                exceedLimit(force);
+                return;
+            }
+
             // Guardar datos
             const dataPoint = {
                 t: state.time,
@@ -490,6 +537,17 @@
             drawChart();
         }
 
+        function exceedLimit(force) {
+            state.running = false;
+            state.finished = true;
+            cancelAnimationFrame(state.timer);
+
+            els.forceDisplay.innerHTML = `<span class="text-yellow-500">LÍMIT SUPERAT!</span><div class="text-sm">${(force/1000).toFixed(2)} kN > ${(state.machineLimit/1000).toFixed(1)} kN</div>`;
+            
+            // Dibuixar la gràfica fins al punt de fallada
+            drawChart();
+        }
+
         function resetTest() {
             state.running = false;
             cancelAnimationFrame(state.timer);
@@ -499,6 +557,7 @@
             els.material.disabled = false;
             els.L0.disabled = false;
             els.D0.disabled = false;
+            els.machineLimit.disabled = false;
             els.btnStart.disabled = false;
             els.btnReset.disabled = true;
             els.btnExport.disabled = true;

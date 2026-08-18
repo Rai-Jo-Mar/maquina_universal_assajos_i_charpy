@@ -110,11 +110,11 @@
     <header class="bg-teal-900 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-teal-500 dark:border-teal-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 data-translate="flexion_title" class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Flexió</h1>
-                <p data-translate="flexion_subtitle" class="text-sm opacity-80 dark:text-slate-300">Assaig de Flexió en 3 Punts (UNE-EN ISO 178 / 14125)</p>
+                <h1 data-translate="flexion_title" class="text-xl sm:text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Flexió</h1>
+                <p data-translate="flexion_subtitle" class="text-xs sm:text-sm opacity-80 dark:text-slate-300">Assaig de Flexió en 3 Punts (UNE-EN ISO 178 / 14125)</p>
             </div>
-            <div class="flex items-center gap-2">
-                <a data-translate="return_to_menu" href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+            <div class="flex items-center gap-1 sm:gap-2">
+                <a data-translate="return_to_menu" href="index.html" class="text-xs sm:text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
                 <!-- Botó de Tema -->
                 <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-teal-800 dark:hover:bg-slate-700 focus:outline-none">
                     <svg class="sun-icon h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
@@ -168,6 +168,15 @@
                                 <option data-translate="pmma" value="pmma">Metacrilat (PMMA)</option>
                                 <option data-translate="pp" value="pp">Polipropilè (Molt flexible)</option>
                             </optgroup>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label data-translate="machine_limit" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Límit de Força de la Màquina</label>
+                        <select id="machineLimitSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white">
+                            <option value="1000">1 kN (Banc Educatiu)</option>
+                            <option value="10000" selected>10 kN (Estàndard Laboratori)</option>
+                            <option value="100000">100 kN (Alta Capacitat)</option>
                         </select>
                     </div>
 
@@ -341,7 +350,8 @@
             data: [],
             timer: null,
             mat: null,
-            geom: { L: 200, b: 30, h: 10, I: 0 }
+            geom: { L: 200, b: 30, h: 10, I: 0 },
+            machineLimit: 10000 // Força màxima de la màquina en Newtons
         };
 
         const els = {
@@ -351,6 +361,7 @@
             thick: document.getElementById('thicknessInput'),
             inertia: document.getElementById('inertiaDisplay'),
             btnStart: document.getElementById('btnStart'),
+            machineLimit: document.getElementById('machineLimitSelect'),
             btnReset: document.getElementById('btnReset'),
             btnExport: document.getElementById('btnExport'),
             beam: document.getElementById('beam'),
@@ -376,6 +387,7 @@
                 el.addEventListener('change', () => { updateGeometry(); updateVisuals(); });
                 el.addEventListener('input', () => { updateGeometry(); updateVisuals(); });
             });
+            els.machineLimit.addEventListener('change', () => { state.machineLimit = parseFloat(els.machineLimit.value); });
 
             window.addEventListener('resize', resizeCanvas);
 
@@ -390,6 +402,8 @@
                 };
                 exportCustomCSV(filename, headers, state.data, rowFormatter);
             });
+
+            state.machineLimit = parseFloat(els.machineLimit.value);
         }
 
         window.addEventListener('themeChanged', () => {
@@ -451,7 +465,7 @@
             if (state.running) return;
             
             // Bloquear UI
-            [els.mat, els.span, els.width, els.thick, els.btnStart].forEach(e => e.disabled = true);
+            [els.mat, els.span, els.width, els.thick, els.btnStart, els.machineLimit].forEach(e => e.disabled = true);
             els.btnReset.disabled = false;
             
             state.running = true;
@@ -521,6 +535,12 @@
             // Ruido
             force += (Math.random() - 0.5) * (force * 0.01);
 
+            // Comprovació del límit de la màquina
+            if (force >= state.machineLimit) {
+                exceedLimit(force);
+                return;
+            }
+
             // Guardar datos
             const dp = { d: state.deflection, f: force, s: stress };
             state.data.push(dp);
@@ -570,6 +590,16 @@
             drawChart();
         }
 
+        function exceedLimit(force) {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+
+            els.force.innerHTML = `<span class="text-yellow-500">LÍMIT SUPERAT!</span><div class="text-sm">${force.toFixed(0)} N > ${state.machineLimit} N</div>`;
+            
+            // Dibuixar la gràfica fins al punt de fallada
+            drawChart();
+        }
+
         function failBrittle() {
             state.running = false;
             els.breakText.textContent = translations[localStorage.getItem('language') || 'ca']['break_fragile'];
@@ -599,7 +629,7 @@
             state.running = false;
             cancelAnimationFrame(state.timer);
             
-            [els.mat, els.span, els.width, els.thick, els.btnStart].forEach(e => e.disabled = false);
+            [els.mat, els.span, els.width, els.thick, els.btnStart, els.machineLimit].forEach(e => e.disabled = false);
             els.btnReset.disabled = true;
             els.btnExport.disabled = true;
             

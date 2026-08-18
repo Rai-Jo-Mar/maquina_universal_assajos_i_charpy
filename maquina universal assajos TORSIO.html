@@ -83,11 +83,11 @@
     <header class="bg-violet-900 dark:bg-gray-900 text-white p-4 shadow-md border-b-4 border-violet-500 dark:border-violet-800">
         <div class="container mx-auto flex justify-between items-center">
             <div>
-                <h1 data-translate="torsion_title" class="text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Torsió</h1>
-                <p data-translate="torsion_subtitle" class="text-sm opacity-80 dark:text-slate-300">Assaig de Torsió Simple (Materials Metàlics)</p>
+                <h1 data-translate="torsion_title" class="text-xl sm:text-2xl font-bold dark:text-slate-100">Laboratori Virtual: Torsió</h1>
+                <p data-translate="torsion_subtitle" class="text-xs sm:text-sm opacity-80 dark:text-slate-300">Assaig de Torsió Simple (Materials Metàlics)</p>
             </div>
-            <div class="flex items-center gap-2">
-                <a data-translate="return_to_menu" href="index.html" class="text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
+            <div class="flex items-center gap-1 sm:gap-2">
+                <a data-translate="return_to_menu" href="index.html" class="text-xs sm:text-sm hover:underline dark:text-slate-300 hidden sm:block">Tornar al menú</a>
                 <!-- Botó de Tema -->
                 <button id="theme-toggle" class="p-2 rounded-full text-slate-300 hover:bg-violet-800 dark:hover:bg-slate-700 focus:outline-none">
                     <!-- Icona Sol (per a tema fosc) -->
@@ -132,14 +132,24 @@
                             <optgroup data-translate="ductile" label="Dúctils">
                                 <option data-translate="f114_steel" value="steel">Acer F-114 (Estructural)</option>
                                 <option data-translate="brass" value="brass">Llautó (Aliatge Cu-Zn)</option>
-                                <option value="aluminum">Alumini 6063</option>
+                                <option data-translate="aluminum" value="aluminum">Alumini (6063)</option>
                             </optgroup>
                             <optgroup data-translate="fragile" label="Fràgils">
-                                <option data-translate="cast_iron" value="cast_iron">Fundició Gris (Ferro Colat)</option>
+                                <option data-translate="cast_iron" value="cast_iron">Fundició Gris</option>
                             </optgroup>
                             <optgroup data-translate="polymers" label="Polímers">
                                 <option data-translate="nylon" value="nylon">Nylon (Poliamida)</option>
+                                <option data-translate="pvc" value="pvc">PVC Rígid</option>
                             </optgroup>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label data-translate="machine_torque_limit" class="block text-sm font-medium text-slate-600 dark:text-slate-300">Límit de Parell de la Màquina</label>
+                        <select id="machineLimitSelect" class="w-full p-2 border dark:border-slate-600 rounded bg-slate-50 dark:bg-slate-700 dark:text-white">
+                            <option data-translate="small_bench" value="100">100 Nm (Banc Petit)</option>
+                            <option data-translate="standard_lab_torsion" value="1000" selected>1000 Nm (Estàndard Laboratori)</option>
+                            <option data-translate="high_capacity_torsion" value="5000">5000 Nm (Alta Capacitat)</option>
                         </select>
                     </div>
 
@@ -150,7 +160,7 @@
                         </div>
                         <div>
                             <label data-translate="diameter" class="block text-xs font-medium text-slate-500">Diàmetre ($D_0$) [mm]</label>
-                            <input type="number" id="diameterInput" value="10" class="w-full p-2 border rounded text-sm" min="5" max="20">
+                            <input type="number" id="diameterInput" value="10" class="w-full p-2 border rounded text-sm" min="2" max="30" step="0.5">
                         </div>
                     </div>
                     
@@ -253,7 +263,8 @@
             brass:      { name: 'Latón',       G: 40000, yieldShear: 150, maxShear: 300, maxAngle: 8, type: 'ductile', color: '#fcd34d' },
             aluminum:   { name: 'Aluminio',    G: 26000, yieldShear: 110, maxShear: 200, maxAngle: 5, type: 'ductile', color: '#cbd5e1' },
             cast_iron:  { name: 'Fundición',   G: 41000, yieldShear: 200, maxShear: 220, maxAngle: 0.8, type: 'brittle', color: '#475569' }, // Muy frágil
-            nylon:      { name: 'Nylon',       G: 1000,  yieldShear: 40,  maxShear: 60,  maxAngle: 25, type: 'ductile', color: '#f1f5f9' }  // Muy elástico
+            nylon:      { name: 'Nylon',       G: 1000,  yieldShear: 40,  maxShear: 60,  maxAngle: 25, type: 'ductile', color: '#f1f5f9' },  // Muy elástico
+            pvc:        { name: 'PVC',         G: 1200,  yieldShear: 30,  maxShear: 45,  maxAngle: 15, type: 'ductile', color: '#e2e8f0' }
         };
 
         let state = {
@@ -262,7 +273,8 @@
             data: [],
             timer: null,
             mat: null,
-            geom: { L: 100, D: 10, J: 0 }
+            geom: { L: 100, D: 10, J: 0 },
+            machineLimit: 1000 // Parell màxim de la màquina en Nm
         };
 
         // DOM Elements
@@ -272,6 +284,7 @@
             dia: document.getElementById('diameterInput'),
             inertia: document.getElementById('inertiaDisplay'),
             btnStart: document.getElementById('btnStart'),
+            machineLimit: document.getElementById('machineLimitSelect'),
             btnReset: document.getElementById('btnReset'),
             btnExport: document.getElementById('btnExport'),
             torqueDisp: document.getElementById('torqueDisplay'),
@@ -294,6 +307,7 @@
                 el.addEventListener('change', () => { updateGeometry(); drawMachineStatic(); });
                 el.addEventListener('input', () => { updateGeometry(); drawMachineStatic(); });
             });
+            els.machineLimit.addEventListener('change', () => { state.machineLimit = parseFloat(els.machineLimit.value); });
 
             window.addEventListener('resize', () => {
                 resizeCanvases();
@@ -310,6 +324,8 @@
                 drawGrid(); // Redibuja la rejilla con los colores del tema
                 if (state.data.length > 0) drawChart(); // Redibuja la gráfica si hay datos
             });
+            
+            state.machineLimit = parseFloat(els.machineLimit.value);
 
             // Afegim l'event listener per al botó d'exportar
             els.btnExport.addEventListener('click', () => {
@@ -345,7 +361,7 @@
         function startTest() {
             if (state.running) return;
 
-            [els.mat, els.len, els.dia, els.btnStart].forEach(e => e.disabled = true);
+            [els.mat, els.len, els.dia, els.btnStart, els.machineLimit].forEach(e => e.disabled = true);
             els.btnReset.disabled = false;
 
             state.running = true;
@@ -402,6 +418,12 @@
             let torque = (shearStress * J) / r;
             torque = torque / 1000; // N.mm a Nm
 
+            // Comprovació del límit de la màquina
+            if (torque >= state.machineLimit) {
+                exceedLimit(torque);
+                return;
+            }
+
             // Fallo
             if (state.angle > maxAngle || shearStress > maxShear) {
                 endTest();
@@ -449,12 +471,22 @@
             drawMachineAnimation(state.angle, true);
         }
 
+        function exceedLimit(torque) {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+
+            els.torqueDisp.innerHTML = `<span class="text-yellow-500 text-base">LÍMIT SUPERAT!</span><div class="text-sm">${torque.toFixed(1)} Nm > ${state.machineLimit} Nm</div>`;
+            
+            // Dibuixar la gràfica fins al punt de fallada
+            drawChart();
+        }
+
         function resetTest() {
             state.running = false;
             cancelAnimationFrame(state.timer);
             state.data = [];
             
-            [els.mat, els.len, els.dia, els.btnStart].forEach(e => e.disabled = false);
+            [els.mat, els.len, els.dia, els.btnStart, els.machineLimit].forEach(e => e.disabled = false);
             els.btnReset.disabled = true;
             els.btnExport.disabled = true;
             
