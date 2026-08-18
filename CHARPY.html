@@ -1,0 +1,637 @@
+<!--
+   CHARPY.html
+   
+   Copyright 2025 Raimundo Martinez <rai@raimundo-macbookair52>
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+   MA 02110-1301, USA.
+   
+   
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+
+<head>
+	
+	<meta name="generator" content="Geany 1.38" />
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Péndulo Charpy - FP Mecánica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuración estándar de MathJax 3
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                tags: 'none' // Desactiva la numeración de ecuaciones
+            },
+            options: {
+                ignoreHtmlClass: 'node-render',
+                processHtmlClass: 'mathjax-render' // Clase para renderizar (por defecto, todo el body)
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="common.js"></script>
+    <style>
+        .machine-bg {
+            background-color: #f0fdf4;
+            background-image: radial-gradient(#86efac 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        canvas {
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+        }
+        .panel-header {
+            background: linear-gradient(90deg, #15803d 0%, #166534 100%);
+            color: white;
+        }
+        /* Slider personalizado para temperatura */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #dc2626;
+            cursor: pointer;
+            margin-top: -8px;
+        }
+        input[type=range].cold::-webkit-slider-thumb { background: #2563eb; }
+        input[type=range].hot::-webkit-slider-thumb { background: #dc2626; }
+    </style>
+</head>
+<body class="bg-green-50 text-slate-800 font-sans">
+
+    <!-- Header -->
+    <header class="bg-green-900 text-white p-4 shadow-md border-b-4 border-green-500">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Laboratorio Virtual: Resiliencia</h1>
+                <p class="text-sm opacity-80">Ensayo de Impacto Charpy (ISO 148-1)</p>
+            </div>
+            <div class="text-right text-sm hidden md:block">
+                <p>Módulo: Ensayos Físicos</p>
+                <p>Simulación: Péndulo 300J</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        
+        <!-- Panel Izquierdo: Configuración y Animación -->
+        <div class="w-full lg:w-5/12 flex flex-col gap-4">
+            
+            <!-- Configuración -->
+            <div class="bg-white rounded-lg shadow border border-green-200 overflow-hidden">
+                <div class="panel-header p-3 font-bold flex justify-between items-center">
+                    <span>1. Preparación de Muestra</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Material</label>
+                        <select id="materialSelect" class="w-full p-2 border rounded bg-green-50 focus:ring-2 focus:ring-green-500 outline-none">
+                            <option value="steel_lowC">Acero Bajo Carbono (S235)</option>
+                            <option value="steel_highC">Acero Alto Carbono (Templado)</option>
+                            <option value="aluminum">Aleación Aluminio (7075)</option>
+                            <option value="titanium">Titanio (Ti-6Al-4V)</option>
+                        </select>
+                        <p class="text-xs text-gray-500 mt-1" id="matDesc">Presenta transición dúctil-frágil clara.</p>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <label class="block text-sm font-medium text-slate-600">Temperatura de Ensayo</label>
+                            <span id="tempDisplay" class="font-bold text-blue-600">20 °C</span>
+                        </div>
+                        <input type="range" id="tempInput" min="-100" max="100" value="20" step="10" 
+                               class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer hot">
+                        <div class="flex justify-between text-xs text-gray-400 mt-1">
+                            <span>-100°C (N₂)</span>
+                            <span>0°C</span>
+                            <span>+100°C</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-2 pt-2">
+                        <button id="btnStrike" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded font-bold transition shadow-md flex justify-center items-center gap-2" onclick="startTest()">
+                            <span class="text-xl">🔨</span> Soltar Péndulo
+                        </button>
+                        <button id="btnReset" class="w-1/3 bg-slate-500 hover:bg-slate-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>
+                            Nueva Probeta
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visor Péndulo -->
+            <div class="bg-white rounded-lg shadow border border-green-200 overflow-hidden flex flex-col relative min-h-[300px]">
+                <div class="absolute top-2 left-2 text-xs font-bold text-gray-400 uppercase z-10">Cámara de Impacto</div>
+                
+                <!-- Canvas Animación -->
+                <div class="w-full h-full machine-bg flex items-center justify-center p-0 relative">
+                    <canvas id="simCanvas" class="w-full h-[320px]"></canvas>
+                    
+                    <!-- Energía Digital -->
+                    <div class="absolute top-4 right-4 bg-black/80 text-yellow-400 font-mono p-2 rounded text-sm border border-yellow-600 shadow-lg text-right w-32">
+                        <div class="text-xs text-gray-400">ENERGÍA (KV)</div>
+                        <div id="energyDisplay" class="text-2xl font-bold">0 J</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Resultados y Curva de Transición -->
+        <div class="w-full lg:w-7/12 flex flex-col gap-4">
+            
+            <!-- Gráfica Curva de Transición -->
+            <div class="bg-white rounded-lg shadow border border-green-200 p-4 h-80 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <div>
+                        <h2 class="text-lg font-bold text-green-800">2. Curva de Transición Dúctil-Frágil</h2>
+                        <p class="text-xs text-gray-500">Realice ensayos a distintas temperaturas para construir la curva.</p>
+                    </div>
+                    <div class="flex gap-2 text-xs">
+                        <span class="px-2 py-1 bg-gray-100 rounded border flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-blue-500"></div> Acero</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded border flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-orange-500"></div> Aluminio</span>
+                    </div>
+                </div>
+                <div class="relative flex-grow w-full h-full">
+                    <canvas id="chartCanvas" class="w-full h-full rounded border border-gray-100"></canvas>
+                </div>
+            </div>
+
+            <!-- Tabla de Resultados -->
+            <div class="bg-white rounded-lg shadow border border-green-200 flex-grow p-4">
+                <div class="flex justify-between items-end mb-3">
+                    <div>
+                        <h2 class="text-lg font-bold text-green-800">3. Registro de Impactos</h2>
+                        <p class="text-xs text-slate-500">Resiliencia $\rho = KCV / S_0$ (J/cm²)</p>
+                    </div>
+                    <div class="flex items-center gap-4" id="export-buttons-container">
+                        <button id="btnExport" disabled class="bg-green-600 hover:bg-green-700 disabled:bg-gray-300 text-white px-3 py-2 rounded text-sm flex items-center gap-2 transition">
+                            Descarregar CSV
+                        </button>
+                        <button id="btnClean" onclick="clearData()" class="text-red-600 hover:text-red-800 text-xs font-bold underline">Borrar Dades</button>
+                    </div>
+                </div>
+                <div class="overflow-y-auto h-48 border rounded">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2">Material</th>
+                                <th class="px-4 py-2">Temp (°C)</th>
+                                <th class="px-4 py-2">Energía (J)</th>
+                                <th class="px-4 py-2">Rotura</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <tr><td colspan="4" class="text-center py-4 text-gray-400">Añada puntos ensayando a diferentes temperaturas.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Física del Ensayo Charpy ---
+        
+        // Definición de materiales y sus curvas de transición (Sigmoides)
+        const materials = {
+            steel_lowC: { 
+                name: 'Acero S235', 
+                desc: 'Transición Dúctil-Frágil muy marcada.',
+                Emax: 180, Emin: 10, Tt: 0, width: 15, color: '#3b82f6',
+                type: 'bcc' // Estructura cristalina BCC (sensible a temp)
+            },
+            steel_highC: { 
+                name: 'Acero Templado', 
+                desc: 'Más frágil, menor energía máxima.',
+                Emax: 60, Emin: 5, Tt: 20, width: 20, color: '#64748b',
+                type: 'bcc'
+            },
+            aluminum: { 
+                name: 'Aluminio 7075', 
+                desc: 'Red FCC: No presenta transición drástica.',
+                Emax: 80, Emin: 70, Tt: -200, width: 50, color: '#f97316',
+                type: 'fcc' // Insensible a temp (casi plana)
+            },
+            titanium: { 
+                name: 'Titanio', 
+                desc: 'Alta tenacidad, curva suave.',
+                Emax: 120, Emin: 80, Tt: -50, width: 30, color: '#8b5cf6',
+                type: 'hcp'
+            }
+        };
+
+        let state = {
+            swinging: false,
+            angle: -Math.PI / 1.2, // Ángulo inicial (levantado a la izquierda)
+            velocity: 0,
+            targetAngle: 0, // A dónde debe llegar tras romper
+            phase: 'ready', // ready, down, impact, up, oscillate
+            data: [],
+            currentMat: null,
+            currentTemp: 20,
+            energyAbsorbed: 0
+        };
+
+        // Configuración Péndulo
+        const PENDULUM = {
+            L: 200, // Longitud brazo (px)
+            cx: 0, cy: 50, // Pivote (se calcula en resize)
+            mass: 20 // kg ficticios para inercia visual
+        };
+
+        // DOM
+        const els = {
+            mat: document.getElementById('materialSelect'),
+            matDesc: document.getElementById('matDesc'),
+            temp: document.getElementById('tempInput'),
+            tempDisp: document.getElementById('tempDisplay'),
+            btnStrike: document.getElementById('btnStrike'),
+            btnReset: document.getElementById('btnReset'),
+            energyDisp: document.getElementById('energyDisplay'),
+            simCvs: document.getElementById('simCanvas'),
+            chartCvs: document.getElementById('chartCanvas'),
+            table: document.getElementById('dataTableBody')
+        };
+
+        const ctx = els.simCvs.getContext('2d');
+        const cCtx = els.chartCvs.getContext('2d');
+
+        // Init
+        function init() {
+            resizeCanvases();
+            drawSimulationStatic();
+            drawChartGrid();
+
+            els.mat.addEventListener('change', () => {
+                const m = materials[els.mat.value];
+                els.matDesc.textContent = m.desc;
+            });
+
+            els.temp.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                els.tempDisp.textContent = (val > 0 ? "+" : "") + val + " °C";
+                
+                // Cambiar color slider
+                if(val < 0) {
+                    els.temp.classList.add('cold'); els.temp.classList.remove('hot');
+                    els.tempDisp.className = "font-bold text-blue-600";
+                } else {
+                    els.temp.classList.add('hot'); els.temp.classList.remove('cold');
+                    els.tempDisp.className = "font-bold text-red-600";
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                resizeCanvases();
+                if(state.data.length > 0) drawChart(); else drawChartGrid();
+                if(!state.swinging) drawSimulationStatic();
+            });
+        }
+        
+        // Afegim l'event listener per al botó d'exportar de forma segura
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btnExport').addEventListener('click', () => {
+             if (state.data.length === 0) return;
+ 
+             const headers = ["Material", "Temperatura (°C)", "Energia (J)", "Tipus de Trencament"];
+             const filename = `Assajos_Charpy.csv`;
+             const rowFormatter = (d) => {
+                 return `${d.mat};${d.temp};${d.E.toFixed(1)};${d.type}`;
+             };
+             exportCustomCSV(filename, headers, state.data, rowFormatter);
+            });
+        });
+        
+        function resizeCanvases() {
+            els.simCvs.width = els.simCvs.offsetWidth;
+            els.simCvs.height = els.simCvs.offsetHeight;
+            els.chartCvs.width = els.chartCvs.offsetWidth;
+            els.chartCvs.height = els.chartCvs.offsetHeight;
+            
+            // Centro péndulo
+            PENDULUM.cx = els.simCvs.width / 2;
+            PENDULUM.cy = 40;
+        }
+
+        // --- Lógica de Energía y Cálculo ---
+        function calculateEnergy(matKey, temp) {
+            const m = materials[matKey];
+            const numerator = m.Emax - m.Emin;
+            const denominator = 1 + Math.exp(-(temp - m.Tt) / m.width);
+            let E = m.Emin + (numerator / denominator);
+            const noise = (Math.random() - 0.5) * (E * 0.1);
+            return Math.max(0, E + noise);
+        }
+
+        function startTest() {
+            if(state.swinging || state.phase !== 'ready') return;
+
+            // Lock UI
+            els.mat.disabled = true;
+            els.temp.disabled = true;
+            els.btnStrike.disabled = true;
+            els.btnReset.disabled = true; 
+
+            state.currentMat = materials[els.mat.value];
+            state.currentTemp = parseInt(els.temp.value);
+            state.energyAbsorbed = calculateEnergy(els.mat.value, state.currentTemp);
+            
+            // Calcular ángulo final objetivo
+            const maxSystemEnergy = 300; 
+            const energyRatio = state.energyAbsorbed / maxSystemEnergy;
+            
+            const startH = 1 - Math.cos(state.angle); 
+            const finalH = Math.max(0, startH - (energyRatio * 2.5)); 
+            
+            let target = Math.acos(1 - finalH);
+            if (isNaN(target)) target = 0;
+            state.targetAngle = target;
+
+            state.swinging = true;
+            state.phase = 'down';
+            state.velocity = 0;
+
+            requestAnimationFrame(animatePendulum);
+        }
+
+        function animatePendulum() {
+            if (!state.swinging) return;
+
+            // CORRECCIÓN FÍSICA: Usar aceleración correcta basada en -sin(theta)
+            const g = 0.6; 
+
+            if (state.phase === 'down') {
+                // Gravedad acelera el péndulo hacia el ángulo 0
+                // Como el ángulo es negativo, -sin(angle) es positivo
+                const acceleration = -1 * g * Math.sin(state.angle);
+                state.velocity += acceleration;
+                state.angle += state.velocity * 0.05;
+
+                if (state.angle >= 0) {
+                    // IMPACTO
+                    state.phase = 'impact';
+                    state.angle = 0;
+                }
+            } else if (state.phase === 'impact') {
+                state.phase = 'up';
+                els.energyDisp.textContent = state.energyAbsorbed.toFixed(1) + " J";
+                recordData();
+
+            } else if (state.phase === 'up') {
+                // Subida animada (Easing) hasta el ángulo objetivo
+                const dist = state.targetAngle - state.angle;
+                state.angle += dist * 0.05; // Velocidad de animación subida
+                
+                if (Math.abs(dist) < 0.01) {
+                    state.phase = 'oscillate';
+                }
+            } else if (state.phase === 'oscillate') {
+                state.swinging = false;
+                els.btnReset.disabled = false;
+            }
+
+            drawSimulation(state.angle);
+            if(state.swinging) requestAnimationFrame(animatePendulum);
+        }
+
+        function recordData() {
+            let fracture = "Mixta";
+            const m = state.currentMat;
+            const E = state.energyAbsorbed;
+            
+            if (m.type === 'bcc') {
+                if (E < (m.Emin + (m.Emax-m.Emin)*0.2)) fracture = "Frágil (Grano brillante)";
+                else if (E > (m.Emax - (m.Emax-m.Emin)*0.2)) fracture = "Dúctil (Fibrosa)";
+            } else {
+                fracture = "Dúctil";
+            }
+
+            const dp = {
+                mat: m.name,
+                color: m.color,
+                temp: state.currentTemp,
+                E: state.energyAbsorbed,
+                type: fracture
+            };
+            state.data.push(dp);
+            
+            // Activem el botó d'exportació perquè ja tenim dades
+            document.getElementById('btnExport').disabled = false;
+            
+            const row = `<tr class="border-b hover:bg-gray-50">
+                <td class="px-4 py-2 font-bold" style="color:${m.color}">${m.name}</td>
+                <td class="px-4 py-2">${dp.temp}°C</td>
+                <td class="px-4 py-2 font-mono font-bold">${dp.E.toFixed(1)}</td>
+                <td class="px-4 py-2 text-xs text-gray-500">${dp.type}</td>
+            </tr>`;
+            els.table.insertAdjacentHTML('afterbegin', row);
+
+            drawChart();
+        }
+
+        function resetTest() {
+            state.swinging = false;
+            state.angle = -Math.PI / 1.2;
+            state.phase = 'ready';
+            state.velocity = 0;
+            
+            els.mat.disabled = false;
+            els.temp.disabled = false;
+            els.btnStrike.disabled = false;
+            els.btnReset.disabled = true;
+            
+            els.energyDisp.textContent = "0 J";
+            drawSimulationStatic();
+        }
+
+        function clearData() {
+            state.data = [];
+            els.table.innerHTML = '';
+            document.getElementById('btnExport').disabled = true; // Desactivem el botó en netejar
+            drawChartGrid();
+        }
+
+        // --- VISUALIZACIÓN SIMULACIÓN ---
+        function drawSimulationStatic() {
+            drawSimulation(state.angle);
+        }
+
+        function drawSimulation(angle) {
+            const ctx = els.simCvs.getContext('2d');
+            const w = els.simCvs.width;
+            const h = els.simCvs.height;
+            const cx = PENDULUM.cx;
+            const cy = PENDULUM.cy;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // 1. Estructura (Yunque)
+            ctx.fillStyle = '#334155';
+            ctx.fillRect(cx - 40, h - 80, 80, 80); 
+            
+            // 2. Probeta
+            const t = state.currentTemp || 20;
+            let probColor = `rgb(${150 + t}, ${150 - Math.abs(t)}, ${150 - t})`;
+            
+            if (state.phase === 'up' || state.phase === 'oscillate') {
+                ctx.fillStyle = probColor;
+                ctx.fillRect(cx - 35, h - 90, 25, 10); 
+                ctx.fillRect(cx + 10, h - 90, 25, 10); 
+            } else {
+                ctx.fillStyle = probColor;
+                ctx.fillRect(cx - 25, h - 90, 50, 10);
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.moveTo(cx - 2, h - 90);
+                ctx.lineTo(cx + 2, h - 90);
+                ctx.lineTo(cx, h - 85);
+                ctx.fill();
+            }
+
+            // 3. Péndulo (Brazo)
+            const endX = cx + Math.sin(angle) * PENDULUM.L;
+            const endY = cy + Math.cos(angle) * PENDULUM.L;
+
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            ctx.lineTo(endX, endY);
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = '#475569';
+            ctx.stroke();
+
+            // 4. Martillo (Cabeza)
+            ctx.beginPath();
+            ctx.arc(endX, endY, 25, 0, Math.PI * 2);
+            ctx.fillStyle = '#0f172a';
+            ctx.fill();
+            const tipX = endX + Math.sin(angle) * 25;
+            const tipY = endY + Math.cos(angle) * 25;
+            ctx.beginPath();
+            ctx.arc(tipX, tipY, 5, 0, Math.PI*2);
+            ctx.fillStyle = 'yellow';
+            ctx.fill();
+
+            // 5. Eje pivote
+            ctx.beginPath();
+            ctx.arc(cx, cy, 10, 0, Math.PI*2);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fill();
+            ctx.stroke();
+            
+            // Escala de grados
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.beginPath();
+            ctx.arc(0,0, PENDULUM.L + 40, Math.PI/4, 3*Math.PI/4);
+            ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.restore();
+        }
+
+        // --- VISUALIZACIÓN GRÁFICA ---
+        function drawChartGrid() {
+            const w = els.chartCvs.width;
+            const h = els.chartCvs.height;
+            const ctx = cCtx;
+            const p = 40;
+
+            ctx.clearRect(0,0,w,h);
+            ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#ddd';
+            for(let i=0; i<=5; i++) {
+                const y = h - p - (i * (h-2*p)/5);
+                ctx.moveTo(p, y); ctx.lineTo(w-p, y);
+                ctx.fillStyle = '#888'; ctx.font = '10px Arial'; ctx.textAlign='right';
+                ctx.fillText((i*60), p-5, y+3); 
+            }
+            for(let i=0; i<=4; i++) {
+                const x = p + (i * (w-2*p)/4);
+                ctx.moveTo(x, p); ctx.lineTo(x, h-p);
+                ctx.fillStyle = '#888'; ctx.textAlign='center';
+                ctx.fillText((-100 + i*50), x, h-p+15);
+            }
+            ctx.stroke();
+
+            ctx.beginPath(); ctx.lineWidth = 1; ctx.strokeStyle = '#000';
+            ctx.moveTo(p, h-p); ctx.lineTo(w-p, h-p); 
+            ctx.moveTo(p, h-p); ctx.lineTo(p, p); 
+            ctx.stroke();
+
+            ctx.save();
+            ctx.translate(15, h/2); ctx.rotate(-Math.PI/2);
+            ctx.textAlign='center'; ctx.fillText("Energía Absorbida (KV) [J]", 0, 0);
+            ctx.restore();
+            ctx.fillText("Temperatura [°C]", w/2, h-10);
+        }
+
+        function drawChart() {
+            drawChartGrid();
+            const w = els.chartCvs.width;
+            const h = els.chartCvs.height;
+            const p = 40;
+            
+            const getX = (t) => p + ((t + 100) / 200) * (w - 2*p);
+            const getY = (e) => (h - p) - (e / 300) * (h - 2*p);
+
+            state.data.forEach(d => {
+                cCtx.beginPath();
+                cCtx.arc(getX(d.temp), getY(d.E), 4, 0, Math.PI*2);
+                cCtx.fillStyle = d.color;
+                cCtx.fill();
+                cCtx.strokeStyle = 'white';
+                cCtx.stroke();
+            });
+            
+            cCtx.save();
+            cCtx.globalAlpha = 0.1;
+            cCtx.beginPath();
+            for(let t=-100; t<=100; t+=5) {
+                const mat = materials['steel_lowC'];
+                const num = mat.Emax - mat.Emin;
+                const den = 1 + Math.exp(-(t - mat.Tt) / mat.width);
+                const E = mat.Emin + (num/den);
+                const x = getX(t); const y = getY(E);
+                if(t===-100) cCtx.moveTo(x,y); else cCtx.lineTo(x,y);
+            }
+            cCtx.strokeStyle = materials['steel_lowC'].color;
+            cCtx.lineWidth = 5;
+            cCtx.stroke();
+            cCtx.restore();
+        }
+
+        init();
+
+    </script>
+</body>
+</html>
+	
+</body>
+
+</html>

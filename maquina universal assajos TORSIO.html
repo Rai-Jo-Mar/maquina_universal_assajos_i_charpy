@@ -1,0 +1,647 @@
+<!--
+   maquian universal ensayos TORSION.html
+   
+   Copyright 2025 Raimundo Martinez <rai@raimundo-macbookair52>
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+   MA 02110-1301, USA.
+   
+   
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	
+	<<meta name="generator" content="Geany 1.38" />>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Assaig Torsió - FP Mecánica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuración estándar de MathJax 3
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                tags: 'none' // Desactiva la numeración de ecuaciones
+            },
+            options: {
+                ignoreHtmlClass: 'node-render',
+                processHtmlClass: 'mathjax-render' // Clase para renderizar (por defecto, todo el body)
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="common.js"></script>
+    <style>
+        .machine-bg {
+            background-color: #f8fafc;
+            background-image:  linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        canvas {
+            background-color: #ffffff;
+        }
+        .panel-header {
+            background: linear-gradient(90deg, #4c1d95 0%, #6d28d9 100%); /* Violeta */
+            color: white;
+        }
+        .highlight-text {
+            color: #5b21b6;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+    <!-- Header -->
+    <header class="bg-violet-900 text-white p-4 shadow-md border-b-4 border-violet-500">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Laboratori Virtual: Torsió</h1>
+                <p class="text-sm opacity-80">Assaig de Torsió Simple (Materials Metàlics)</p>
+            </div>
+            <div class="text-right text-sm hidden md:block">
+                <p>Mòdul: Assajos Físics</p>
+                <p>Simulació: Torsiòmetre Digital</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        
+        <!-- Panel Izquierdo: Controles y Simulación -->
+        <div class="w-full lg:w-5/12 flex flex-col gap-4">
+            
+            <!-- Configuración -->
+            <div class="bg-white rounded-lg shadow border border-slate-200 overflow-hidden">
+                <div class="panel-header p-3 font-bold flex justify-between items-center">
+                    <span>1. Configuració de l'Assaig</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                </div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Material</label>
+                        <select id="materialSelect" class="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-violet-500 outline-none">
+                            <optgroup label="Dúctiles">
+                                <option value="steel">Acer F-114 (Estructural)</option>
+                                <option value="brass">Llautó (Aliatge Cu-Zn)</option>
+                                <option value="aluminum">Alumini 6063</option>
+                            </optgroup>
+                            <optgroup label="Frágiles">
+                                <option value="cast_iron">Fundició Gris (Ferro Colat)</option>
+                            </optgroup>
+                            <optgroup label="Polímeros">
+                                <option value="nylon">Nylon (Poliamida)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500">Longitut ($L_0$) [mm]</label>
+                            <input type="number" id="lengthInput" value="100" class="w-full p-2 border rounded text-sm" min="50" max="200">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500">Diàmetre ($D_0$) [mm]</label>
+                            <input type="number" id="diameterInput" value="10" class="w-full p-2 border rounded text-sm" min="5" max="20">
+                        </div>
+                    </div>
+                    
+                    <div class="bg-violet-50 p-2 rounded border border-violet-100 text-xs text-violet-900">
+                        <div class="flex justify-between mb-1">
+                            <span>Moment Polar Inercia ($J$):</span>
+                            <span id="inertiaDisplay" class="font-mono font-bold">981.7 mm⁴</span>
+                        </div>
+                        <div class="text-[10px] text-violet-700 opacity-80 italic">
+                            Fòrmula: $J = \frac{\pi \cdot D^4}{32}$ (Secció massissa)
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button id="btnStart" class="flex-1 bg-violet-600 hover:bg-violet-700 text-white py-2 rounded font-bold transition shadow-md" onclick="startTest()">
+                            ▶ Iniciar Gir
+                        </button>
+                        <button id="btnReset" class="w-1/3 bg-slate-500 hover:bg-slate-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>
+                            ↻ Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visor Visual (Canvas Máquina) -->
+            <div class="bg-white rounded-lg shadow border border-slate-200 overflow-hidden flex flex-col relative min-h-[280px]">
+                <div class="absolute top-2 left-2 text-xs font-bold text-gray-400 uppercase z-10">Banc de Torsió</div>
+                
+                <!-- Machine Canvas -->
+                <div class="w-full h-full machine-bg flex items-center justify-center p-2 relative">
+                    <canvas id="machineCanvas" class="w-full h-[250px]"></canvas>
+                    
+                    <!-- Digital Displays Overlay -->
+                    <div class="absolute bottom-4 left-4 bg-black/90 text-green-400 font-mono p-2 rounded text-sm border border-gray-600 shadow-lg">
+                        <div class="text-xs text-gray-400">PARELL (Torque)</div>
+                        <div id="torqueDisplay" class="text-xl font-bold">0.00 Nm</div>
+                    </div>
+                    <div class="absolute bottom-4 right-4 bg-black/90 text-cyan-400 font-mono p-2 rounded text-sm border border-gray-600 shadow-lg text-right">
+                        <div class="text-xs text-gray-400">ANGLE ($\phi$)</div>
+                        <div id="angleDisplay" class="text-xl font-bold">0.0°</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Gráfica y Datos -->
+        <div class="w-full lg:w-7/12 flex flex-col gap-4">
+            
+            <!-- Gráfica -->
+            <div class="bg-white rounded-lg shadow border border-slate-200 p-4 h-96 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-bold text-violet-800">2. Diagrama Moment - Angle</h2>
+                    <div class="flex gap-2 text-xs">
+                        <span class="px-2 py-1 bg-gray-100 rounded border">Y: Parell Torsor (Nm)</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded border">X: Gir (rad)</span>
+                    </div>
+                </div>
+                <div class="relative flex-grow w-full h-full">
+                    <canvas id="chartCanvas" class="w-full h-full rounded border border-gray-100"></canvas>
+                </div>
+            </div>
+
+            <!-- Tabla de Datos -->
+            <div class="bg-white rounded-lg shadow border border-slate-200 flex-grow p-4">
+                <div class="flex justify-between items-end mb-3">
+                    <div>
+                        <h2 class="text-lg font-bold text-violet-800">3. Registre de Dades</h2>
+                        <p class="text-xs text-slate-500">Tensió tallant máx: $\tau = \frac{16 T}{\pi D^3}$</p>
+                    </div>
+                    <button id="btnExport" disabled class="bg-violet-600 hover:bg-violet-700 disabled:bg-gray-300 text-white px-3 py-2 rounded text-sm flex items-center gap-2 transition">
+                        Descarregar CSV
+                    </button>
+                </div>
+                <div class="overflow-y-auto h-48 border rounded">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2">Ángue (°)</th>
+                                <th class="px-4 py-2">Ángle (rad)</th>
+                                <th class="px-4 py-2">Parell (Nm)</th>
+                                <th class="px-4 py-2">$\tau$ (MPa)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <tr><td colspan="4" class="text-center py-4 text-gray-400">Sistema en repos. Configura probeta.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Física de Materiales (Torsión) ---
+        // G: Módulo de Rigidez (Shear Modulus) en MPa
+        // yieldTorque: Punto aproximado de fluencia para probeta estándar (D=10)
+        // type: 'ductile' (corte plano) o 'brittle' (corte helicoidal 45º)
+        const materials = {
+            steel:      { name: 'Acero F-114', G: 79000, yieldShear: 250, maxShear: 400, maxAngle: 6, type: 'ductile', color: '#94a3b8' },
+            brass:      { name: 'Latón',       G: 40000, yieldShear: 150, maxShear: 300, maxAngle: 8, type: 'ductile', color: '#fcd34d' },
+            aluminum:   { name: 'Aluminio',    G: 26000, yieldShear: 110, maxShear: 200, maxAngle: 5, type: 'ductile', color: '#cbd5e1' },
+            cast_iron:  { name: 'Fundición',   G: 41000, yieldShear: 200, maxShear: 220, maxAngle: 0.8, type: 'brittle', color: '#475569' }, // Muy frágil
+            nylon:      { name: 'Nylon',       G: 1000,  yieldShear: 40,  maxShear: 60,  maxAngle: 25, type: 'ductile', color: '#f1f5f9' }  // Muy elástico
+        };
+
+        let state = {
+            running: false,
+            angle: 0, // Radianes
+            data: [],
+            timer: null,
+            mat: null,
+            geom: { L: 100, D: 10, J: 0 }
+        };
+
+        // DOM Elements
+        const els = {
+            mat: document.getElementById('materialSelect'),
+            len: document.getElementById('lengthInput'),
+            dia: document.getElementById('diameterInput'),
+            inertia: document.getElementById('inertiaDisplay'),
+            btnStart: document.getElementById('btnStart'),
+            btnReset: document.getElementById('btnReset'),
+            btnExport: document.getElementById('btnExport'),
+            torqueDisp: document.getElementById('torqueDisplay'),
+            angleDisp: document.getElementById('angleDisplay'),
+            table: document.getElementById('dataTableBody'),
+            machineCvs: document.getElementById('machineCanvas'),
+            chartCvs: document.getElementById('chartCanvas')
+        };
+
+        const mCtx = els.machineCvs.getContext('2d');
+        const cCtx = els.chartCvs.getContext('2d');
+
+        function init() {
+            updateGeometry();
+            resizeCanvases();
+            drawMachineStatic(); // Dibujo inicial
+            drawGrid(); // Gráfica vacía
+
+            [els.mat, els.len, els.dia].forEach(el => {
+                el.addEventListener('change', () => { updateGeometry(); drawMachineStatic(); });
+                el.addEventListener('input', () => { updateGeometry(); drawMachineStatic(); });
+            });
+
+            window.addEventListener('resize', () => {
+                resizeCanvases();
+                if (state.data.length > 0) {
+                    drawChart();
+                    drawMachineStatic(); // O animate si corre
+                } else {
+                    drawGrid();
+                    drawMachineStatic();
+                }
+            });
+
+            // Afegim l'event listener per al botó d'exportar
+            els.btnExport.addEventListener('click', () => {
+                if (state.data.length === 0) return;
+
+                const headers = ["Angle (deg)", "Angle (rad)", "Parell (Nm)", "Tensió Tallant (MPa)"];
+                const filename = `Torsio_${state.mat.name}.csv`;
+                const rowFormatter = (d) => {
+                    return `${d.angDeg.toFixed(2)};${d.angRad.toFixed(4)};${d.T.toFixed(3)};${d.tau.toFixed(2)}`;
+                };
+                exportCustomCSV(filename, headers, state.data, rowFormatter);
+            });
+        }
+
+        function updateGeometry() {
+            state.geom.L = parseFloat(els.len.value);
+            state.geom.D = parseFloat(els.dia.value);
+            
+            // Momento Polar de Inercia J = (pi * D^4) / 32
+            const J = (Math.PI * Math.pow(state.geom.D, 4)) / 32;
+            state.geom.J = J;
+            els.inertia.textContent = J.toFixed(1) + " mm⁴";
+        }
+
+        function resizeCanvases() {
+            els.machineCvs.width = els.machineCvs.offsetWidth;
+            els.machineCvs.height = els.machineCvs.offsetHeight;
+            els.chartCvs.width = els.chartCvs.offsetWidth;
+            els.chartCvs.height = els.chartCvs.offsetHeight;
+        }
+
+        // --- Lógica de Simulación ---
+        function startTest() {
+            if (state.running) return;
+
+            [els.mat, els.len, els.dia, els.btnStart].forEach(e => e.disabled = true);
+            els.btnReset.disabled = false;
+
+            state.running = true;
+            state.angle = 0;
+            state.data = [];
+            state.mat = materials[els.mat.value];
+            els.table.innerHTML = '';
+
+            state.timer = requestAnimationFrame(loop);
+        }
+
+        function loop() {
+            if (!state.running) return;
+
+            // Incremento de ángulo (velocidad giro)
+            // Nylon gira más rápido en la simulación para no aburrir
+            const speed = state.mat.name === 'Nylon' ? 0.05 : 0.015; 
+            state.angle += speed;
+
+            // --- FÍSICA ---
+            const { G, yieldShear, maxShear, maxAngle, type } = state.mat;
+            const { D, L, J } = state.geom;
+
+            // 1. Strain (Gamma) aproximado en superficie
+            // gamma = (angle * r) / L
+            const r = D / 2;
+            const gamma = (state.angle * r) / L;
+
+            // 2. Torque calculation
+            // Zona Elástica: T = (G * J * angle) / L
+            // Convertir unidades: G(MPa = N/mm2), L(mm), J(mm4) -> T(N*mm) -> /1000 para Nm
+            
+            let shearStress = 0; // Tau
+            
+            // Modelo Bilineal con endurecimiento
+            const elasticLimitGamma = yieldShear / G;
+            
+            if (gamma < elasticLimitGamma) {
+                // Elástico
+                shearStress = G * gamma;
+            } else {
+                // Plástico
+                // Curva suave de endurecimiento
+                const plasticGamma = gamma - elasticLimitGamma;
+                // Endurecimiento simple
+                shearStress = yieldShear + (maxShear - yieldShear) * (1 - Math.exp(-plasticGamma * 50)); 
+            }
+
+            // Ruido
+            shearStress += (Math.random() - 0.5) * (maxShear * 0.005);
+
+            // Torque (T) = (Tau * J) / r  (Formula inversa de torsion)
+            // Unidades: Tau(MPa), J(mm4), r(mm) -> T en N.mm
+            let torque = (shearStress * J) / r;
+            torque = torque / 1000; // N.mm a Nm
+
+            // Fallo
+            if (state.angle > maxAngle || shearStress > maxShear) {
+                endTest();
+                return;
+            }
+
+            const dp = {
+                angRad: state.angle,
+                angDeg: state.angle * (180/Math.PI),
+                T: torque,
+                tau: shearStress
+            };
+            state.data.push(dp);
+
+            updateUI(dp);
+            if (state.running) requestAnimationFrame(loop);
+        }
+
+        function updateUI(dp) {
+            els.torqueDisp.textContent = dp.T.toFixed(2) + " Nm";
+            els.angleDisp.textContent = dp.angDeg.toFixed(1) + "°";
+
+            drawMachineAnimation(dp.angRad);
+            drawChart();
+
+            // Tabla (Optimized)
+            if (state.data.length % 10 === 0) {
+                const row = `<tr>
+                    <td class="px-4 py-1 text-gray-500">${dp.angDeg.toFixed(1)}</td>
+                    <td class="px-4 py-1 font-mono text-xs">${dp.angRad.toFixed(3)}</td>
+                    <td class="px-4 py-1 font-bold text-violet-700">${dp.T.toFixed(2)}</td>
+                    <td class="px-4 py-1 text-gray-400">${dp.tau.toFixed(1)}</td>
+                </tr>`;
+                els.table.insertAdjacentHTML('afterbegin', row);
+                if (els.table.children.length > 20) els.table.lastElementChild.remove();
+            }
+        }
+
+        function endTest() {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+            els.btnExport.disabled = false;
+            
+            // Dibujar rotura
+            drawMachineAnimation(state.angle, true);
+        }
+
+        function resetTest() {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+            state.data = [];
+            
+            [els.mat, els.len, els.dia, els.btnStart].forEach(e => e.disabled = false);
+            els.btnReset.disabled = true;
+            els.btnExport.disabled = true;
+            
+            els.torqueDisp.textContent = "0.00 Nm";
+            els.angleDisp.textContent = "0.0°";
+            els.table.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-400">Listo.</td></tr>';
+
+            cCtx.clearRect(0, 0, els.chartCvs.width, els.chartCvs.height);
+            drawGrid();
+            drawMachineStatic();
+        }
+
+        // --- CANVAS VISUALIZACIÓN MÁQUINA ---
+        function drawMachineStatic() {
+            drawMachineAnimation(0);
+        }
+
+        function drawMachineAnimation(angleRad, broken = false) {
+            const w = els.machineCvs.width;
+            const h = els.machineCvs.height;
+            const ctx = mCtx;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Configuración Visual
+            const centerY = h / 2;
+            const padding = 60;
+            const specimenLength = w - (padding * 2);
+            const specimenRadius = Math.min(state.geom.D * 2, 20); // Scale visual
+
+            // 1. Dibujar Probeta (Cilindro)
+            ctx.save();
+            // Gradiente metálico
+            const grad = ctx.createLinearGradient(0, centerY - specimenRadius, 0, centerY + specimenRadius);
+            grad.addColorStop(0, '#cbd5e1');
+            grad.addColorStop(0.5, state.mat ? state.mat.color : '#94a3b8'); // Color material
+            grad.addColorStop(1, '#64748b');
+            
+            ctx.fillStyle = grad;
+            
+            // Si está roto, dibujamos dos partes
+            if (broken) {
+                // Gap en el medio
+                const breakX = w/2;
+                const gap = 10;
+                
+                // Parte Izquierda
+                ctx.fillRect(padding, centerY - specimenRadius, (specimenLength/2) - gap/2, specimenRadius * 2);
+                // Parte Derecha
+                ctx.fillRect(breakX + gap/2, centerY - specimenRadius, (specimenLength/2) - gap/2, specimenRadius * 2);
+                
+                // Dibujar borde de rotura
+                ctx.strokeStyle = '#dc2626';
+                ctx.lineWidth = 2;
+                if (state.mat.type === 'brittle') {
+                    // Rotura helicoidal (diagonal)
+                    ctx.beginPath();
+                    ctx.moveTo(breakX - gap/2, centerY - specimenRadius);
+                    ctx.lineTo(breakX - gap/2 - 10, centerY + specimenRadius);
+                    ctx.stroke();
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(breakX + gap/2, centerY - specimenRadius);
+                    ctx.lineTo(breakX + gap/2 - 10, centerY + specimenRadius);
+                    ctx.stroke();
+                } else {
+                    // Rotura dúctil (recta)
+                    ctx.beginPath();
+                    ctx.moveTo(breakX - gap/2, centerY - specimenRadius);
+                    ctx.lineTo(breakX - gap/2, centerY + specimenRadius);
+                    ctx.stroke();
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(breakX + gap/2, centerY - specimenRadius);
+                    ctx.lineTo(breakX + gap/2, centerY + specimenRadius);
+                    ctx.stroke();
+                }
+
+            } else {
+                // Probeta entera
+                ctx.fillRect(padding, centerY - specimenRadius, specimenLength, specimenRadius * 2);
+                
+                // Líneas Longitudinales (Para ver el giro)
+                ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                
+                // Dibujamos una línea horizontal que se deforma
+                // y = radius * sin(angle * x / L) ??? No, en 2D side view:
+                // La línea en la superficie sigue una hélice. Proyectada es una senoide.
+                // y_proj = R * sin(theta_x + initial_phase)
+                // theta_x = total_angle * (x / L)
+                
+                const numLines = 3; // Líneas longitudinales visibles
+                for(let l=0; l<numLines; l++) {
+                    const phase = (l / numLines) * Math.PI; // Distribuidas en la cara visible
+                    
+                    for (let x = 0; x <= specimenLength; x+=2) {
+                        const relativeX = x / specimenLength;
+                        const localAngle = angleRad * relativeX;
+                        
+                        // Posición Y proyectada 3D -> 2D
+                        // Solo dibujamos si cos > 0 (cara frontal)
+                        // Simplificación visual: pintar siempre pero con transparencia en los bordes
+                        const yOffset = specimenRadius * Math.sin(localAngle + phase);
+                        
+                        if (x===0) ctx.moveTo(padding + x, centerY + yOffset);
+                        else ctx.lineTo(padding + x, centerY + yOffset);
+                    }
+                }
+                ctx.stroke();
+            }
+            ctx.restore();
+
+            // 2. Mordaza Izquierda (Fija)
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(20, centerY - 25, padding - 20, 50);
+            ctx.strokeStyle = '#1e293b';
+            ctx.strokeRect(20, centerY - 25, padding - 20, 50);
+
+            // 3. Mordaza Derecha (Giratoria)
+            const rightX = w - padding;
+            ctx.fillStyle = '#475569';
+            ctx.fillRect(rightX, centerY - 25, padding - 20, 50);
+            
+            // Dibujar Dial de Giro en la mordaza derecha
+            ctx.save();
+            ctx.translate(rightX + 20, centerY);
+            // Rotar contexto para simular giro del cabezal
+            ctx.rotate(angleRad); 
+            
+            // Dial visual (círculo con marcas)
+            ctx.beginPath();
+            ctx.arc(0, 0, 18, 0, Math.PI * 2);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(18, 0); // Manecilla
+            ctx.stroke();
+            
+            // Puntos decorativos
+            ctx.fillStyle = '#334155';
+            for(let i=0; i<4; i++) {
+                ctx.beginPath();
+                ctx.arc(12, 0, 2, 0, Math.PI*2);
+                ctx.fill();
+                ctx.rotate(Math.PI/2);
+            }
+            ctx.restore();
+            
+            // Etiqueta de rotura
+            if (broken) {
+                ctx.fillStyle = 'red';
+                ctx.font = 'bold 20px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText("ROTURA", w/2, centerY - 40);
+            }
+        }
+
+        // --- GRÁFICA ---
+        function drawGrid() {
+            const w = els.chartCvs.width;
+            const h = els.chartCvs.height;
+            const ctx = cCtx;
+            const p = 30;
+
+            ctx.clearRect(0,0,w,h);
+            ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
+            
+            ctx.strokeStyle = '#f1f5f9'; ctx.lineWidth = 1;
+            for(let x=p; x<w; x+=40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h-p); ctx.stroke(); }
+            for(let y=h-p; y>0; y-=40) { ctx.beginPath(); ctx.moveTo(p,y); ctx.lineTo(w,y); ctx.stroke(); }
+
+            ctx.strokeStyle = '#334155'; ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(p,0); ctx.lineTo(p,h-p); ctx.lineTo(w,h-p);
+            ctx.stroke();
+        }
+
+        function drawChart() {
+            if (state.data.length < 2) return;
+            const w = els.chartCvs.width;
+            const h = els.chartCvs.height;
+            const ctx = cCtx;
+            const p = 30;
+
+            const maxT = Math.max(...state.data.map(d => d.T)) * 1.2 || 10;
+            const maxAng = Math.max(...state.data.map(d => d.angRad)) * 1.2 || 1;
+
+            drawGrid();
+
+            const getX = (val) => p + (val / maxAng) * (w - p);
+            const getY = (val) => (h - p) - (val / maxT) * (h - p);
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#7c3aed'; // Violet 600
+            ctx.lineWidth = 3;
+            ctx.moveTo(getX(0), getY(0));
+
+            for (let d of state.data) {
+                ctx.lineTo(getX(d.angRad), getY(d.T));
+            }
+            ctx.stroke();
+
+            ctx.fillStyle = '#000';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'right'; ctx.fillText(maxT.toFixed(1), p-5, 12);
+            ctx.textAlign = 'center'; ctx.fillText(maxAng.toFixed(2), w-20, h-p+15);
+        }
+
+        init();
+    </script>
+</body>
+</html>
+
+<body>
+	
+</body>
+
+</html>

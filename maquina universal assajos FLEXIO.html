@@ -1,0 +1,623 @@
+<!--
+   maquina universal de ensayos FLEXION.html
+   
+   Copyright 2025 Raimundo Martinez <rai@raimundo-macbookair52>
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+   MA 02110-1301, USA.
+   
+   
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	
+	<<meta name="generator" content="Geany 1.38" />>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Assaig Flexió</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuración estándar de MathJax 3
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                tags: 'none' // Desactiva la numeración de ecuaciones
+            },
+            options: {
+                ignoreHtmlClass: 'node-render',
+                processHtmlClass: 'mathjax-render' // Clase para renderizar (por defecto, todo el body)
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="common.js"></script>
+    <style>
+        .machine-bg {
+            background-color: #f1f5f9;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .indenter {
+            fill: url(#gradIndenter);
+            stroke: #475569;
+            stroke-width: 2;
+        }
+        .support {
+            fill: url(#gradSupport);
+            stroke: #475569;
+            stroke-width: 2;
+        }
+        .beam {
+            transition: stroke 0.3s;
+            stroke-linecap: round;
+        }
+        canvas {
+            border: 1px solid #e5e7eb;
+            background-color: #ffffff;
+        }
+        .panel-header {
+            background: linear-gradient(90deg, #0f766e 0%, #0d9488 100%);
+            color: white;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+    <!-- Header -->
+    <header class="bg-teal-900 text-white p-4 shadow-md border-b-4 border-teal-500">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Laboratori Virtual: Flexió</h1>
+                <p class="text-sm opacity-80">Assaig de Flexió en 3 Punts (UNE-EN ISO 178 / 14125)</p>
+            </div>
+            <div class="text-right text-sm hidden md:block">
+                <p>Mòdul: Assajos Físics</p>
+                <p>Simulació: Biga Simple Recolzada</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        
+        <!-- Panel Izquierdo: Controles y Simulación -->
+        <div class="w-full lg:w-5/12 flex flex-col gap-4">
+            
+            <!-- Configuración -->
+            <div class="bg-white rounded-lg shadow border border-slate-200 overflow-hidden">
+                <div class="panel-header p-3 font-bold flex justify-between items-center">
+                    <span>1. Probeta i Material</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 opacity-70" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.532 1.532 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.532 1.532 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" /></svg>
+                </div>
+                <div class="p-4 space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Selecció de Material</label>
+                        <select id="materialSelect" class="w-full p-2 border rounded bg-slate-50 focus:ring-2 focus:ring-teal-500 outline-none">
+                            <optgroup label="Metales">
+                                <option value="steel">Acer Estructural (S275)</option>
+                                <option value="aluminum">Aliatge Alumini</option>
+                            </optgroup>
+                            <optgroup label="Maderas">
+                                <option value="pine">Madera de Pi (Conífera)</option>
+                                <option value="oak">Madera de Roure (Frondosa)</option>
+                            </optgroup>
+                            <optgroup label="Cerámicos y Vidrio">
+                                <option value="glass">Vidre (Fràgil)</option>
+                                <option value="ceramic">Taulellet Ceràmic</option>
+                            </optgroup>
+                            <optgroup label="Polímeros">
+                                <option value="pmma">Metacrilat (PMMA)</option>
+                                <option value="pp">Polipropile (Molt flexible)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500">Llum ($L$) [mm]</label>
+                            <input type="number" id="spanInput" value="200" class="w-full p-2 border rounded text-sm" min="100" max="400">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500">Ample ($b$) [mm]</label>
+                            <input type="number" id="widthInput" value="30" class="w-full p-2 border rounded text-sm" min="10" max="50">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-500">Gruix ($h$) [mm]</label>
+                            <input type="number" id="thicknessInput" value="10" class="w-full p-2 border rounded text-sm" min="2" max="20">
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-2 rounded border border-blue-100 text-xs text-blue-800 flex justify-between">
+                        <span>Moment d'Inercia ($I_z$):</span>
+                        <span id="inertiaDisplay" class="font-mono font-bold">2500 mm⁴</span>
+                    </div>
+
+                    <div class="flex gap-2 pt-2">
+                        <button id="btnStart" class="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded font-bold transition shadow-md" onclick="startTest()">
+                            ▶ Iniciar Assaig
+                        </button>
+                        <button id="btnReset" class="w-1/3 bg-slate-500 hover:bg-slate-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>
+                            ↻ Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Visor SVG -->
+            <div class="bg-white rounded-lg shadow border border-slate-200 overflow-hidden flex flex-col relative min-h-[300px]">
+                <div class="absolute top-2 left-2 text-xs font-bold text-gray-400 uppercase z-10">Cambra de'Assaig</div>
+                
+                <!-- SVG Container -->
+                <div class="w-full h-full machine-bg flex items-center justify-center p-4">
+                    <svg id="machineSvg" width="100%" height="250" viewBox="0 0 400 250" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <linearGradient id="gradIndenter" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#64748b;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#94a3b8;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#64748b;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="gradSupport" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#475569;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#64748b;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#475569;stop-opacity:1" />
+                            </linearGradient>
+                            <pattern id="patternWood" patternUnits="userSpaceOnUse" width="10" height="10" patternTransform="rotate(45)">
+                                <line x1="0" y="0" x2="0" y2="10" stroke="#d97706" stroke-width="1" opacity="0.5" />
+                            </pattern>
+                        </defs>
+
+                        <!-- Escala base -->
+                        <line x1="20" y1="220" x2="380" y2="220" stroke="#94a3b8" stroke-width="2" />
+                        
+                        <!-- Apoyos (Calculados dinámicamente en JS, estos son placeholders) -->
+                        <g id="supportsGroup">
+                            <!-- Left Support -->
+                            <path d="M90 220 L100 200 L110 220 Z" class="support" />
+                            <circle cx="100" cy="200" r="3" fill="#334155" />
+                            <!-- Right Support -->
+                            <path d="M290 220 L300 200 L310 220 Z" class="support" />
+                            <circle cx="300" cy="200" r="3" fill="#334155" />
+                        </g>
+
+                        <!-- Viga (Probeta) - Inicialmente recta -->
+                        <!-- Usaremos una curva Bezier cuadrática: M start Q control end -->
+                        <path id="beam" d="M80 200 L320 200" stroke="#d97706" stroke-width="12" fill="none" class="beam" />
+                        
+                        <!-- Indenter (Punzón de carga) -->
+                        <g id="indenterGroup" transform="translate(200, 190)">
+                            <path d="M-15 -40 L15 -40 L0 10 Z" class="indenter" />
+                            <rect x="-5" y="-100" width="10" height="60" fill="#64748b" />
+                            <!-- Flecha fuerza -->
+                            <path d="M0 -80 L0 -50" stroke="red" stroke-width="2" marker-end="url(#arrowhead)" />
+                        </g>
+                        
+                        <!-- Texto de rotura (oculto) -->
+                        <text id="breakText" x="200" y="100" text-anchor="middle" font-size="24" font-weight="bold" fill="red" opacity="0">TRENCAMENT!</text>
+                    </svg>
+                </div>
+
+                <div class="absolute bottom-4 right-4 bg-white/90 p-2 rounded border border-slate-300 shadow text-right font-mono">
+                    <div class="text-xs text-slate-500">Càrrega (F)</div>
+                    <div id="forceDisplay" class="text-xl font-bold text-teal-700">0.0 N</div>
+                    <div class="text-xs text-slate-500 mt-1">Fletxa ($\delta$)</div>
+                    <div id="deflectionDisplay" class="text-lg text-slate-700">0.00 mm</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Gráfica y Datos -->
+        <div class="w-full lg:w-7/12 flex flex-col gap-4">
+            
+            <!-- Gráfica -->
+            <div class="bg-white rounded-lg shadow border border-slate-200 p-4 h-96 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-bold text-teal-800">2. Gràfica Força vs Fletxa</h2>
+                    <div class="flex gap-2 text-xs">
+                        <span class="px-2 py-1 bg-gray-100 rounded border">Eix Y: Força (N)</span>
+                        <span class="px-2 py-1 bg-gray-100 rounded border">Eix X: Fletxa (mm)</span>
+                    </div>
+                </div>
+                <div class="relative flex-grow w-full h-full">
+                    <canvas id="testCanvas" class="w-full h-full rounded cursor-crosshair"></canvas>
+                </div>
+            </div>
+
+            <!-- Tabla de Datos -->
+            <div class="bg-white rounded-lg shadow border border-slate-200 flex-grow p-4">
+                <div class="flex justify-between items-end mb-3">
+                    <div>
+                        <h2 class="text-lg font-bold text-teal-800">3. Registre de Dades</h2>
+                        <p class="text-xs text-slate-500">Fórmulas: $\sigma_f = \frac{3FL}{2bh^2}$ | $\epsilon_f = \frac{6h\delta}{L^2}$</p>
+                    </div>
+                    <button id="btnExport" disabled class="bg-teal-600 hover:bg-teal-700 disabled:bg-gray-300 text-white px-3 py-2 rounded text-sm flex items-center gap-2 transition">
+                        Descarregar CSV
+                    </button>
+                </div>
+                <div class="overflow-y-auto h-48 border rounded">
+                    <table class="w-full text-sm text-left text-gray-600">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2">Foça (N)</th>
+                                <th class="px-4 py-2">Flectxa (mm)</th>
+                                <th class="px-4 py-2">Tensió (MPa)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <tr><td colspan="3" class="text-center py-4 text-gray-400">Configura la probeta i inicia l'assaig.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Física de Materiales (Flexión) ---
+        // MOR (Modulus of Rupture) = Resistencia a flexión
+        // E_flex = Módulo de elasticidad en flexión
+        const materials = {
+            steel:    { name: 'Acero S275',   E: 210000, MOR: 450, type: 'ductile', color: '#94a3b8', maxDef: 15 },
+            aluminum: { name: 'Aluminio',     E: 70000,  MOR: 300, type: 'ductile', color: '#cbd5e1', maxDef: 20 },
+            pine:     { name: 'Madera Pino',  E: 12000,  MOR: 85,  type: 'brittle', color: '#d97706', maxDef: 12 },
+            oak:      { name: 'Madera Roble', E: 14000,  MOR: 110, type: 'brittle', color: '#a16207', maxDef: 10 },
+            glass:    { name: 'Vidrio',       E: 70000,  MOR: 40,  type: 'brittle', color: '#a5f3fc', maxDef: 2, opacity: 0.6 },
+            ceramic:  { name: 'Cerámica',     E: 60000,  MOR: 35,  type: 'brittle', color: '#fca5a5', maxDef: 1.5 },
+            pmma:     { name: 'Metacrilato',  E: 3000,   MOR: 100, type: 'ductile', color: '#e2e8f0', maxDef: 25, opacity: 0.5 },
+            pp:       { name: 'Polipropileno',E: 1500,   MOR: 40,  type: 'super-ductile', color: '#f1f5f9', maxDef: 40 }
+        };
+
+        let state = {
+            running: false,
+            deflection: 0, // mm (Variable principal de control)
+            data: [],
+            timer: null,
+            mat: null,
+            geom: { L: 200, b: 30, h: 10, I: 0 }
+        };
+
+        const els = {
+            mat: document.getElementById('materialSelect'),
+            span: document.getElementById('spanInput'),
+            width: document.getElementById('widthInput'),
+            thick: document.getElementById('thicknessInput'),
+            inertia: document.getElementById('inertiaDisplay'),
+            btnStart: document.getElementById('btnStart'),
+            btnReset: document.getElementById('btnReset'),
+            btnExport: document.getElementById('btnExport'),
+            beam: document.getElementById('beam'),
+            indenter: document.getElementById('indenterGroup'),
+            supports: document.getElementById('supportsGroup'),
+            force: document.getElementById('forceDisplay'),
+            deflection: document.getElementById('deflectionDisplay'),
+            table: document.getElementById('dataTableBody'),
+            canvas: document.getElementById('testCanvas'),
+            breakText: document.getElementById('breakText')
+        };
+
+        const ctx = els.canvas.getContext('2d');
+
+        // Inicialización
+        function init() {
+            updateGeometry();
+            updateVisuals();
+            resizeCanvas();
+            drawGrid();
+
+            [els.mat, els.span, els.width, els.thick].forEach(el => {
+                el.addEventListener('change', () => { updateGeometry(); updateVisuals(); });
+                el.addEventListener('input', () => { updateGeometry(); updateVisuals(); });
+            });
+
+            window.addEventListener('resize', resizeCanvas);
+
+            // Afegim l'event listener per al botó d'exportar
+            els.btnExport.addEventListener('click', () => {
+                if (state.data.length === 0) return;
+
+                const headers = ["Fletxa (mm)", "Força (N)", "Tensió (MPa)"];
+                const filename = `Flexio_${state.mat.name}.csv`;
+                const rowFormatter = (d) => {
+                    return `${d.d.toFixed(3)};${d.f.toFixed(2)};${d.s.toFixed(2)}`;
+                };
+                exportCustomCSV(filename, headers, state.data, rowFormatter);
+            });
+        }
+
+        function updateGeometry() {
+            state.geom.L = parseFloat(els.span.value);
+            state.geom.b = parseFloat(els.width.value);
+            state.geom.h = parseFloat(els.thick.value);
+            
+            // Inercia Iz = (b*h^3)/12
+            const I = (state.geom.b * Math.pow(state.geom.h, 3)) / 12;
+            state.geom.I = I;
+            els.inertia.textContent = I.toFixed(0) + " mm⁴";
+        }
+
+        function updateVisuals() {
+            const mat = materials[els.mat.value];
+            
+            // 1. Color de la probeta
+            els.beam.setAttribute('stroke', mat.color);
+            els.beam.setAttribute('stroke-opacity', mat.opacity || 1);
+            els.beam.setAttribute('stroke-width', state.geom.h); // Espesor visual relativo
+
+            // 2. Posición de los apoyos (SVG coordenadas)
+            // Centro SVG es x=200. Escala visual aprox: 1mm real = 1 pixel SVG (simplificado)
+            const centerX = 200;
+            const yPos = 200;
+            const halfSpan = state.geom.L / 2;
+            
+            // Actualizar dibujo apoyos
+            const xLeft = centerX - halfSpan;
+            const xRight = centerX + halfSpan;
+            
+            // Dibujar soportes dinámicamente
+            els.supports.innerHTML = `
+                <path d="M${xLeft-10} ${yPos+20} L${xLeft} ${yPos} L${xLeft+10} ${yPos+20} Z" class="support" />
+                <circle cx="${xLeft}" cy="${yPos}" r="3" fill="#334155" />
+                <path d="M${xRight-10} ${yPos+20} L${xRight} ${yPos} L${xRight+10} ${yPos+20} Z" class="support" />
+                <circle cx="${xRight}" cy="${yPos}" r="3" fill="#334155" />
+            `;
+
+            // Actualizar viga (Recta inicial)
+            // Sobresale un poco de los apoyos (Overhang de 10mm)
+            els.beam.setAttribute('d', `M${xLeft-10} ${yPos} L${xRight+10} ${yPos}`);
+            
+            // Reset indenter
+            els.indenter.setAttribute('transform', `translate(${centerX}, ${yPos - 10})`); // 10px arriba para tocar superficie
+            els.breakText.setAttribute('opacity', 0);
+        }
+
+        function startTest() {
+            if (state.running) return;
+            
+            // Bloquear UI
+            [els.mat, els.span, els.width, els.thick, els.btnStart].forEach(e => e.disabled = true);
+            els.btnReset.disabled = false;
+            
+            state.running = true;
+            state.deflection = 0;
+            state.data = [];
+            state.mat = materials[els.mat.value];
+            els.table.innerHTML = '';
+
+            state.timer = requestAnimationFrame(loop);
+        }
+
+        function loop() {
+            if (!state.running) return;
+
+            // Incremento de flecha
+            const speed = 0.05; // mm por frame
+            state.deflection += speed;
+
+            // --- Modelo Físico Flexión 3 Puntos ---
+            // Fórmula básica elástica: delta = (F * L^3) / (48 * E * I)
+            // Despejando F: F = (delta * 48 * E * I) / L^3
+            
+            const { L, b, h, I } = state.geom;
+            const { E, MOR, type } = state.mat;
+
+            // 1. Calcular Fuerza Elástica Teórica
+            let force = (state.deflection * 48 * E * I) / Math.pow(L, 3);
+            
+            // 2. Calcular Tensión Máxima (Fibra externa)
+            // Sigma = (3 * F * L) / (2 * b * h^2)
+            let stress = (3 * force * L) / (2 * b * Math.pow(h, 2));
+
+            // 3. Comportamiento Material (Plasticidad / Rotura)
+            
+            if (type === 'brittle') {
+                // Frágil: Lineal hasta rotura (MOR)
+                if (stress >= MOR) {
+                    failBrittle();
+                    return;
+                }
+            } else {
+                // Dúctil: Curva plástica
+                // Límite elástico aprox 70% del MOR para simulación
+                const yieldStress = MOR * 0.7;
+                
+                if (stress > yieldStress) {
+                    // Modelo plástico simplificado: la tensión crece mucho más lento
+                    // Re-calculamos tensión plástica
+                    const plasticDef = state.deflection - (yieldStress * Math.pow(L,3))/(48*E*I* (3*L/(2*b*h*h)) ); // Muy complejo despejar exacto
+                    // Simplificación visual: Atenuar crecimiento de fuerza
+                    const ratio = stress / yieldStress;
+                    force = force / (1 + (ratio-1)*2); // Atenuación artificial
+                    stress = (3 * force * L) / (2 * b * Math.pow(h, 2)); // Recalcular stress basado en nueva fuerza
+                }
+
+                // Rotura final o límite de deformación
+                if (stress >= MOR || state.deflection > state.mat.maxDef) {
+                    if (type === 'super-ductile' && state.deflection < state.mat.maxDef) {
+                        // Polipropileno sigue doblando sin romper
+                    } else {
+                        failDuctile();
+                        return;
+                    }
+                }
+            }
+
+            // Ruido
+            force += (Math.random() - 0.5) * (force * 0.01);
+
+            // Guardar datos
+            const dp = { d: state.deflection, f: force, s: stress };
+            state.data.push(dp);
+            
+            updateSimulationUI(dp);
+
+            if (state.running) requestAnimationFrame(loop);
+        }
+
+        function updateSimulationUI(dp) {
+            els.force.textContent = dp.f.toFixed(1) + " N";
+            els.deflection.textContent = dp.d.toFixed(2) + " mm";
+
+            // --- Animación SVG ---
+            const centerX = 200;
+            const yPos = 200; // Nivel de soportes
+            const halfSpan = state.geom.L / 2;
+            const scaleVisual = 5; // Exagerar deformación visualmente (1mm real = 5px visual)
+
+            const visualDef = dp.d * scaleVisual;
+            const startX = centerX - halfSpan - 10;
+            const endX = centerX + halfSpan + 10;
+            
+            // Curva Bezier Cuadrática
+            // P0 (Inicio), P1 (Control), P2 (Fin)
+            // Para pasar por el punto (centerX, yPos + visualDef), el punto de control P1 debe estar al doble de altura
+            // Propiedad de Bezier cuadratica: Altura en t=0.5 es 1/2 de la altura del control point relativo a la base.
+            const controlY = yPos + (visualDef * 2); 
+
+            els.beam.setAttribute('d', `M${startX} ${yPos} Q${centerX} ${controlY} ${endX} ${yPos}`);
+            
+            // Mover Indenter
+            // El indenter baja visualDef
+            els.indenter.setAttribute('transform', `translate(${centerX}, ${yPos - 10 + visualDef})`);
+
+            // Tabla
+            if (state.data.length % 5 === 0) {
+                const row = `<tr>
+                    <td class="px-4 py-1 font-mono">${dp.f.toFixed(1)}</td>
+                    <td class="px-4 py-1 text-blue-600">${dp.d.toFixed(2)}</td>
+                    <td class="px-4 py-1 text-gray-500">${dp.s.toFixed(1)}</td>
+                </tr>`;
+                els.table.insertAdjacentHTML('afterbegin', row);
+                if (els.table.children.length > 20) els.table.lastElementChild.remove();
+            }
+
+            drawChart();
+        }
+
+        function failBrittle() {
+            state.running = false;
+            els.breakText.textContent = "¡ROTURA FRÁGIL!";
+            els.breakText.setAttribute('opacity', 1);
+            els.btnExport.disabled = false;
+            
+            // Efecto visual: Viga partida en dos líneas rectas cayendo
+            const centerX = 200;
+            const yPos = 200;
+            const halfSpan = state.geom.L / 2;
+            const visualDef = state.deflection * 5;
+            
+            // Cambiamos el Path curvo por dos líneas (path) que simulan la 'V' rota
+            els.beam.setAttribute('d', `M${centerX-halfSpan-10} ${yPos} L${centerX} ${yPos + visualDef + 10} M${centerX} ${yPos + visualDef + 10} L${centerX+halfSpan+10} ${yPos}`);
+            els.beam.setAttribute('stroke', 'red'); // Color rotura
+        }
+
+        function failDuctile() {
+            state.running = false;
+            els.breakText.textContent = "LÍMITE DEF.";
+            els.breakText.setAttribute('fill', 'orange');
+            els.breakText.setAttribute('opacity', 1);
+            els.btnExport.disabled = false;
+        }
+
+        function resetTest() {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+            
+            [els.mat, els.span, els.width, els.thick, els.btnStart].forEach(e => e.disabled = false);
+            els.btnReset.disabled = true;
+            els.btnExport.disabled = true;
+            
+            // Reset Visuals
+            updateVisuals(); 
+            
+            els.force.textContent = "0.0 N";
+            els.deflection.textContent = "0.00 mm";
+            els.table.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-gray-400">Listo para nuevo ensayo.</td></tr>';
+            
+            ctx.clearRect(0, 0, els.canvas.width, els.canvas.height);
+            drawGrid();
+        }
+
+        function drawGrid() {
+            const w = els.canvas.width;
+            const h = els.canvas.height;
+            const p = 30;
+
+            ctx.clearRect(0,0,w,h);
+            ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
+            
+            ctx.strokeStyle = '#f1f5f9'; ctx.lineWidth = 1;
+            // Grid
+            for(let x=p; x<w; x+=40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h-p); ctx.stroke(); }
+            for(let y=h-p; y>0; y-=40) { ctx.beginPath(); ctx.moveTo(p,y); ctx.lineTo(w,y); ctx.stroke(); }
+
+            // Ejes
+            ctx.strokeStyle = '#334155'; ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(p,0); ctx.lineTo(p,h-p); ctx.lineTo(w,h-p);
+            ctx.stroke();
+        }
+
+        function drawChart() {
+            if (state.data.length < 2) return;
+            const w = els.canvas.width;
+            const h = els.canvas.height;
+            const p = 30;
+
+            // Escalas dinámicas
+            const maxF = Math.max(...state.data.map(d => d.f)) * 1.2 || 10;
+            const maxD = Math.max(...state.data.map(d => d.d)) * 1.2 || 1;
+
+            drawGrid();
+
+            const getX = (val) => p + (val / maxD) * (w - p);
+            const getY = (val) => (h - p) - (val / maxF) * (h - p);
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#0d9488'; // Teal 600
+            ctx.lineWidth = 3;
+            ctx.moveTo(getX(0), getY(0));
+
+            for (let d of state.data) {
+                ctx.lineTo(getX(d.d), getY(d.f));
+            }
+            ctx.stroke();
+
+            // Etiquetas Ejes
+            ctx.fillStyle = '#000';
+            ctx.font = '10px Arial';
+            ctx.textAlign = 'right'; ctx.fillText(maxF.toFixed(0), p-5, 12);
+            ctx.textAlign = 'center'; ctx.fillText(maxD.toFixed(1), w-20, h-p+15);
+        }
+
+        function resizeCanvas() {
+            els.canvas.width = els.canvas.offsetWidth;
+            els.canvas.height = els.canvas.offsetHeight;
+            if (state.data.length > 0) drawChart(); else drawGrid();
+        }
+
+        init();
+    </script>
+</body>
+</html>
+
+<body>
+	
+</body>
+
+</html>

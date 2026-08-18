@@ -1,0 +1,546 @@
+<!--
+   maquina universal ensayos COMPRESION.html
+   
+   Copyright 2025 Raimundo Martinez <rai@raimundo-macbookair52>
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+   MA 02110-1301, USA.
+   
+   
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+	
+	<<meta name="generator" content="Geany 1.38" />>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Assajos Compresió</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configuración estándar de MathJax 3
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                tags: 'none' // Desactiva la numeración de ecuaciones
+            },
+            options: {
+                ignoreHtmlClass: 'node-render',
+                processHtmlClass: 'mathjax-render' // Clase para renderizar (por defecto, todo el body)
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script src="common.js"></script>
+
+    <style>
+        .machine-frame {
+            background: linear-gradient(90deg, #2c3e50 0%, #7f8c8d 10%, #7f8c8d 90%, #2c3e50 100%);
+        }
+        .platen {
+            background: linear-gradient(180deg, #95a5a6 0%, #7f8c8d 100%);
+            border: 1px solid #5e6d6d;
+            position: relative; 
+            z-index: 20;
+        }
+        .specimen-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; /* Alineado arriba para contacto con plato superior */
+            width: 100%;
+            /* Altura automática para que se apilen */
+        }
+        .specimen {
+            transition: height 0.1s linear, width 0.1s linear, border-radius 0.2s;
+            transform-origin: top center; /* IMPORTANTE: Se comprime hacia arriba */
+            box-shadow: inset 5px 0 10px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        canvas {
+            border: 1px solid #e5e7eb;
+            background-color: #ffffff;
+        }
+        .cracked {
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10 L30 40 L20 80 M60 10 L50 50 L80 90' stroke='black' stroke-width='1' fill='none' opacity='0.5'/%3E%3C/svg%3E") !important;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800 font-sans">
+
+    <!-- Header -->
+    <header class="bg-stone-800 text-white p-4 shadow-md border-b-4 border-orange-500">
+        <div class="container mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold">Laboratori Virtual: Compresió</h1>
+                <p class="text-sm opacity-80">Assajos de Materials</p>
+            </div>
+            <div class="text-right text-sm hidden md:block">
+                <p>Módul: Assajos Físics</p>
+                <p>Simulació: Premsa Hidràulica</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto p-4 flex flex-col lg:flex-row gap-6">
+        
+        <!-- Panel Izquierdo: Configuración y Máquina -->
+        <div class="w-full lg:w-1/3 flex flex-col gap-4">
+            
+            <!-- Configuración -->
+            <div class="bg-white p-4 rounded-lg shadow border border-stone-200">
+                <h2 class="text-lg font-bold mb-3 text-orange-700 border-b pb-2">1. Configuració de Probeta</h2>
+                
+                <div class="grid grid-cols-1 gap-3 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600">Material</label>
+                        <select id="materialSelect" class="w-full p-2 border rounded bg-stone-50">
+                            <optgroup label="Materiales de Construcción (Frágiles)">
+                                <option value="concrete25">Formigó HA-25 (Convencional)</option>
+                                <option value="concrete50">Formigó HA-50 (Alta Resistencia)</option>
+                                <option value="mortar">Morter de Ciment (M-15)</option>
+                            </optgroup>
+                            <optgroup label="Metales (Dúctiles)">
+                                <option value="aluminum">Aliatge d'Alumini</option>
+                                <option value="copper">Coure</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600">Altura ($H_0$) [mm]</label>
+                            <input type="number" id="heightInput" value="300" class="w-full p-2 border rounded" min="100" max="300">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600">Diàmetre ($D_0$) [mm]</label>
+                            <input type="number" id="diameterInput" value="150" class="w-full p-2 border rounded" min="50" max="200">
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-500 mt-1">
+                        * Probeta Cilíndrica Estandar ($15x30$ cm per defecte)
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="btnStart" class="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-bold transition shadow-sm" onclick="startTest()">Iniciar Compresió</button>
+                    <button id="btnReset" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white py-2 rounded font-bold transition" onclick="resetTest()" disabled>Nova Probeta</button>
+                </div>
+            </div>
+
+            <!-- Visualización de la Prensa -->
+            <div class="bg-white p-4 rounded-lg shadow border border-stone-200 flex-grow flex flex-col items-center justify-center min-h-[400px] relative">
+                <h3 class="absolute top-4 left-4 text-xs font-bold text-gray-400 uppercase">Premsa d'Assaos</h3>
+                
+                <!-- Estructura Prensa -->
+                <div class="relative w-48 flex flex-col items-center mt-8">
+                    
+                    <!-- Plato Superior (Fijo visualmente) -->
+                    <div class="w-40 h-8 platen rounded-t-sm shadow-md flex items-center justify-center">
+                        <span class="text-[10px] text-gray-600">Plat Superior</span>
+                    </div>
+
+                    <!-- Espacio de la probeta (Sin altura fija para contacto) -->
+                    <div class="specimen-container">
+                        <div id="specimen" class="specimen bg-stone-400 w-24 h-32 border border-stone-500/20"></div>
+                    </div>
+
+                    <!-- Plato Inferior (Móvil) -->
+                    <div id="lowerPlaten" class="w-40 h-12 platen rounded-b-sm shadow-md flex items-center justify-center will-change-transform">
+                        <span class="text-[10px] text-gray-600">Plat Inferior (Pistó)</span>
+                    </div>
+                    
+                    <!-- Base Hidráulica (Decorativa, estática) -->
+                    <div class="w-32 h-16 bg-stone-700 mt-[-5px] rounded-b-lg z-0 absolute top-full"></div>
+                </div>
+
+                <div class="absolute bottom-4 right-4 text-center bg-black p-3 rounded border-2 border-gray-500 font-mono shadow-inner w-32">
+                    <div class="text-xs text-red-500 text-right mb-1">LOAD CELL</div>
+                    <div class="text-xl font-bold text-green-500" id="forceDisplay">0.00 kN</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Gráfica y Datos -->
+        <div class="w-full lg:w-2/3 flex flex-col gap-4">
+            
+            <!-- Gráfica -->
+            <div class="bg-white p-4 rounded-lg shadow border border-stone-200 h-96 flex flex-col">
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="text-lg font-bold text-orange-700">2. Gràfica Tensió - Deformació</h2>
+                    <div class="text-xs text-gray-500">
+                        Eje Y: Tensió (MPa) | Eje X: Acurtament (%)
+                    </div>
+                </div>
+                <div class="relative flex-grow w-full h-full">
+                    <canvas id="testCanvas" class="w-full h-full rounded"></canvas>
+                </div>
+            </div>
+
+            <!-- Datos y Exportación -->
+            <div class="bg-white p-4 rounded-lg shadow border border-stone-200 flex-grow">
+                <div class="flex justify-between items-end mb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-orange-700">3. Registre de Dades</h2>
+                        <p class="text-sm text-slate-500">Valors negatius indiquen compresió (acurtament).</p>
+                    </div>
+                    <button id="btnExport" disabled class="bg-stone-600 hover:bg-stone-700 disabled:bg-gray-300 text-white px-4 py-2 rounded flex items-center gap-2 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Descarregar CSV
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto max-h-60">
+                    <table class="w-full text-sm text-left text-gray-500">
+                        <thead class="text-xs text-gray-700 uppercase bg-gray-100 sticky top-0">
+                            <tr>
+                                <th class="px-4 py-2">Força (kN)</th>
+                                <th class="px-4 py-2">Acurtament (mm)</th>
+                                <th class="px-4 py-2">Tensió (MPa)</th>
+                                <th class="px-4 py-2">Deformació (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                            <tr><td colspan="4" class="text-center py-4">Sistema preparat. Posa probeta.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Física de Materiales (Compresión) ---
+        const materials = {
+            concrete25: { name: 'Hormigón HA-25', E: 28000, fck: 25, maxStrain: 0.0035, type: 'brittle', color: '#9ca3af', texture: 'grain' },
+            concrete50: { name: 'Hormigón HA-50', E: 37000, fck: 50, maxStrain: 0.003, type: 'brittle', color: '#6b7280', texture: 'grain' },
+            mortar:     { name: 'Mortero M-15', E: 15000, fck: 15, maxStrain: 0.004, type: 'brittle', color: '#d6d3d1', texture: 'grain' },
+            aluminum:   { name: 'Aluminio', E: 70000, fck: 200, maxStrain: 0.20, type: 'ductile', color: '#cbd5e1', texture: 'smooth' }, 
+            copper:     { name: 'Cobre', E: 110000, fck: 100, maxStrain: 0.30, type: 'ductile', color: '#b45309', texture: 'smooth' }
+        };
+
+        let state = {
+            running: false,
+            time: 0,
+            strain: 0, 
+            data: [],
+            timer: null,
+            currentMaterial: null,
+            specimen: { H0: 300, D0: 150, Area0: 0, visualHeightPx: 0 }
+        };
+
+        const els = {
+            material: document.getElementById('materialSelect'),
+            H0: document.getElementById('heightInput'),
+            D0: document.getElementById('diameterInput'),
+            btnStart: document.getElementById('btnStart'),
+            btnReset: document.getElementById('btnReset'),
+            btnExport: document.getElementById('btnExport'),
+            specimen: document.getElementById('specimen'),
+            lowerPlaten: document.getElementById('lowerPlaten'),
+            forceDisplay: document.getElementById('forceDisplay'),
+            tableBody: document.getElementById('dataTableBody'),
+            canvas: document.getElementById('testCanvas')
+        };
+
+        const ctx = els.canvas.getContext('2d');
+
+        function init() {
+            resizeCanvas();
+            updateGeometry();
+            
+            els.material.addEventListener('change', updateVisuals);
+            els.H0.addEventListener('input', () => { updateGeometry(); updateVisuals(); });
+            els.D0.addEventListener('input', () => { updateGeometry(); updateVisuals(); });
+            
+            window.addEventListener('resize', () => {
+                resizeCanvas();
+                if(state.data.length > 0) drawChart();
+                else drawGrid();
+            });
+            
+            updateVisuals();
+            drawGrid();
+
+            // Afegim l'event listener per al botó d'exportar
+            els.btnExport.addEventListener('click', () => {
+                // Comprovem que hi hagi dades per exportar
+                if (state.data.length === 0) return;
+
+                const headers = ["Força (kN)", "Acurtament (mm)", "Tensió (MPa)", "Deformació (%)"];
+                const filename = `Compresio_${state.currentMaterial.name}.csv`;
+                const rowFormatter = (d) => {
+                    return `${(d.f/1000).toFixed(2)};${d.dL.toFixed(3)};${d.s.toFixed(2)};${d.e.toFixed(3)}`;
+                };
+                exportCustomCSV(filename, headers, state.data, rowFormatter);
+            });
+        }
+
+        function updateGeometry() {
+            const h = parseFloat(els.H0.value);
+            const d = parseFloat(els.D0.value);
+            state.specimen.H0 = h;
+            state.specimen.D0 = d;
+            state.specimen.Area0 = Math.PI * Math.pow((d/2), 2);
+        }
+
+        function updateVisuals() {
+            const matKey = els.material.value;
+            const mat = materials[matKey];
+            
+            // Reset styles
+            els.specimen.style.backgroundColor = mat.color;
+            els.specimen.className = `specimen w-24 relative z-10 border border-stone-500/20`; 
+            
+            // Ajustar proporción visual 
+            const ratio = state.specimen.H0 / state.specimen.D0;
+            const baseWidth = 80; 
+            const visualHeight = baseWidth * ratio * 0.6; 
+            
+            // Guardamos la altura visual inicial para los cálculos de animación
+            state.specimen.visualHeightPx = Math.min(visualHeight, 200);
+
+            els.specimen.style.width = `${baseWidth}px`;
+            els.specimen.style.height = `${state.specimen.visualHeightPx}px`;
+            
+            // Reset de transformaciones
+            els.specimen.style.transform = 'none';
+            els.specimen.style.borderRadius = '0';
+            els.lowerPlaten.style.transform = 'translateY(0)';
+        }
+
+        function resizeCanvas() {
+            els.canvas.width = els.canvas.offsetWidth;
+            els.canvas.height = els.canvas.offsetHeight;
+        }
+
+        function startTest() {
+            if (state.running) return;
+            
+            els.material.disabled = true;
+            els.H0.disabled = true;
+            els.D0.disabled = true;
+            els.btnStart.disabled = true;
+            els.btnReset.disabled = false;
+
+            state.running = true;
+            state.strain = 0;
+            state.data = [];
+            state.currentMaterial = materials[els.material.value];
+            els.tableBody.innerHTML = '';
+            
+            state.timer = requestAnimationFrame(testLoop);
+        }
+
+        function testLoop() {
+            if (!state.running) return;
+
+            const strainIncrement = 0.0001; // Un poco más rápido que antes
+            state.strain += strainIncrement;
+            
+            const mat = state.currentMaterial;
+            let stress = 0;
+
+            // --- MODELO MATEMÁTICO ---
+            if (mat.type === 'brittle') {
+                const e0 = 0.002;
+                if (state.strain <= mat.maxStrain) {
+                    const ratio = state.strain / e0;
+                    if (state.strain <= e0) {
+                        stress = mat.fck * (2 * ratio - Math.pow(ratio, 2));
+                    } else {
+                        stress = mat.fck * (1 - (state.strain - e0) * 100); 
+                        if (stress < 0) stress = 0;
+                    }
+                } else {
+                    endTest();
+                    return;
+                }
+            } else {
+                const elasticLimit = mat.fck / mat.E;
+                if (state.strain < elasticLimit) {
+                    stress = mat.E * state.strain;
+                } else {
+                    stress = mat.fck + (mat.E/50) * (state.strain - elasticLimit);
+                }
+                if (state.strain > 0.20) { // Límite de seguridad visual
+                    endTest();
+                    return;
+                }
+            }
+
+            const noise = (Math.random() - 0.5) * (mat.fck * 0.02);
+            let finalStress = Math.max(0, stress + noise);
+
+            const force = finalStress * state.specimen.Area0; 
+            const reportedStress = force / state.specimen.Area0; 
+            const shortening = state.strain * state.specimen.H0;
+
+            state.data.push({
+                f: force,
+                s: reportedStress,
+                e: state.strain * 100,
+                dL: shortening
+            });
+
+            updateUI(force, reportedStress, shortening);
+
+            if (state.running) requestAnimationFrame(testLoop);
+        }
+
+        function updateUI(force, stress, shortening) {
+            els.forceDisplay.textContent = (force / 1000).toFixed(2) + " kN";
+
+            // --- ANIMACIÓN CORREGIDA ---
+            // 1. Calculamos cuántos píxeles visuales se ha encogido la probeta
+            const visualShrinkage = state.specimen.visualHeightPx * state.strain;
+
+            // 2. Transformación de la probeta
+            // scaleY reduce desde el transform-origin (TOP)
+            let transformSpecimen = `scaleY(${1 - state.strain})`;
+            
+            // Efecto Barrelling (solo metales)
+            if (state.currentMaterial.type === 'ductile') {
+                els.specimen.style.borderRadius = `${state.strain * 50}px`;
+                const scaleX = Math.sqrt(1 / (1 - state.strain));
+                transformSpecimen += ` scaleX(${scaleX})`;
+            }
+
+            els.specimen.style.transform = transformSpecimen;
+
+            // 3. MOVIMIENTO DEL PLATO INFERIOR
+            // Movemos el plato hacia arriba (negativo Y) exactamente lo que encogió la probeta
+            els.lowerPlaten.style.transform = `translateY(-${visualShrinkage}px)`;
+
+
+            drawChart();
+
+            if (state.data.length % 10 === 0) {
+                const row = `<tr>
+                    <td class="px-4 py-1 font-mono">${(force/1000).toFixed(2)}</td>
+                    <td class="px-4 py-1 text-blue-600">${shortening.toFixed(2)}</td>
+                    <td class="px-4 py-1 font-bold">${stress.toFixed(1)}</td>
+                    <td class="px-4 py-1 text-gray-400">${(state.strain*100).toFixed(2)}</td>
+                </tr>`;
+                els.tableBody.insertAdjacentHTML('afterbegin', row);
+                if (els.tableBody.children.length > 20) els.tableBody.lastElementChild.remove();
+            }
+        }
+
+        function endTest() {
+            state.running = false;
+            cancelAnimationFrame(state.timer);
+            els.btnExport.disabled = false;
+            els.forceDisplay.textContent = "FALLO";
+            
+            if (state.currentMaterial.type === 'brittle') {
+                els.specimen.classList.add('cracked');
+                // Pequeño colapso visual extra al romper
+                const visualShrinkage = state.specimen.visualHeightPx * (state.strain + 0.02);
+                els.lowerPlaten.style.transform = `translateY(-${visualShrinkage}px)`;
+                els.specimen.style.transform = `scaleY(${1 - state.strain - 0.02})`;
+            }
+            drawChart();
+        }
+
+        function resetTest() {
+            state.running = false;
+            state.data = [];
+            cancelAnimationFrame(state.timer);
+            
+            els.material.disabled = false;
+            els.H0.disabled = false;
+            els.D0.disabled = false;
+            els.btnStart.disabled = false;
+            els.btnReset.disabled = true;
+            els.btnExport.disabled = true;
+            
+            els.specimen.classList.remove('cracked');
+            updateVisuals(); // Esto resetea posiciones y tamaños
+            
+            els.forceDisplay.textContent = "0.00 kN";
+            els.tableBody.innerHTML = '<tr><td colspan="4" class="text-center py-4">Listo.</td></tr>';
+            
+            ctx.clearRect(0, 0, els.canvas.width, els.canvas.height);
+            drawGrid();
+        }
+
+        function drawGrid() {
+            const w = els.canvas.width;
+            const h = els.canvas.height;
+            const p = 30;
+
+            ctx.clearRect(0,0,w,h);
+            ctx.fillStyle = '#fff'; ctx.fillRect(0,0,w,h);
+            
+            ctx.strokeStyle = '#e5e7eb'; ctx.lineWidth = 1;
+            ctx.beginPath();
+            for(let x=p; x<w; x+=40) { ctx.moveTo(x,0); ctx.lineTo(x,h-p); }
+            for(let y=h-p; y>0; y-=40) { ctx.moveTo(p,y); ctx.lineTo(w,y); }
+            ctx.stroke();
+
+            ctx.strokeStyle = '#000'; ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(p,0); ctx.lineTo(p,h-p); ctx.lineTo(w,h-p);
+            ctx.stroke();
+        }
+
+        function drawChart() {
+            if (state.data.length < 2) return;
+            const w = els.canvas.width;
+            const h = els.canvas.height;
+            const p = 30;
+
+            const maxS = Math.max(...state.data.map(d => d.s)) * 1.2;
+            const maxE = Math.max(...state.data.map(d => d.e)) * 1.2;
+
+            drawGrid();
+
+            const getX = (val) => p + (val / maxE) * (w - p);
+            const getY = (val) => (h - p) - (val / maxS) * (h - p);
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#d97706'; 
+            ctx.lineWidth = 3;
+            ctx.moveTo(getX(0), getY(0));
+
+            for (let d of state.data) {
+                ctx.lineTo(getX(d.e), getY(d.s));
+            }
+            ctx.stroke();
+            
+            ctx.fillStyle = '#000';
+            ctx.textAlign = 'right'; ctx.fillText(`${maxS.toFixed(0)} MPa`, p-5, 10);
+            ctx.textAlign = 'center'; ctx.fillText(`${maxE.toFixed(2)} %`, w-20, h-p+15);
+        }
+
+        init();
+    </script>
+</body>
+</html>
+
+<body>
+	
+</body>
+
+</html>
